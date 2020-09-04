@@ -20,6 +20,7 @@ module "ec2-instances" {
   source                 = "./module-ec2-instances"
   instance_count         = var.instance_count
   instance_type          = var.instance_type
+  ami_version_pattern    = var.ami_version_pattern
   application_subnets    = local.mgmt_private_subnet_ids
   vpc_security_group_ids = module.security-groups.vpc_security_group_ids
   zone_name              = var.zone_name

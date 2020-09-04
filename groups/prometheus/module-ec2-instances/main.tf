@@ -4,7 +4,7 @@ data "aws_ami" "prometheus" {
   most_recent = true
   filter {
     name   = "name"
-    values = ["prometheus-ami-*"]
+    values = ["prometheus-ami-${var.ami_version_pattern}"]
   }
 }
 

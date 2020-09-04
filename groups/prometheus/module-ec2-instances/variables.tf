@@ -5,6 +5,9 @@ variable "instance_type" {
 variable "instance_count" {
   type = number
 }
+variable "ami_version_pattern" {
+  type = string
+}
 
 # Networking
 variable "application_subnets" {

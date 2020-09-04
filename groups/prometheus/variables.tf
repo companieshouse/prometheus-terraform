@@ -28,6 +28,10 @@ variable "instance_type" {
   type    = string
   default = "t3.small"
 }
+variable "ami_version_pattern" {
+  type = string
+  default = "*"
+}
 
 # SSH
 variable "ssh_keyname" {
