@@ -19,7 +19,6 @@ module "security-groups" {
 module "ec2-instances" {
   source                 = "./module-ec2-instances"
   instance_count         = var.instance_count
-  ami                    = var.ami
   instance_type          = var.instance_type
   application_subnets    = local.mgmt_private_subnet_ids
   vpc_security_group_ids = module.security-groups.vpc_security_group_ids

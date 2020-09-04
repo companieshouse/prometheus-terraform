@@ -21,9 +21,6 @@ variable "zone_name" {
 }
 
 # EC2 Instances
-variable "ami" {
-  type = string
-}
 variable "instance_count" {
   type = string
 }

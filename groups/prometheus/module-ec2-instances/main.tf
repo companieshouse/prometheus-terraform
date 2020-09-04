@@ -1,7 +1,16 @@
 # EC2 Instance
+data "aws_ami" "prometheus" {
+  owners      = ["self"]
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["prometheus-ami-*"]
+  }
+}
+
 resource "aws_instance" "prometheus_instance" {
   count                  = var.instance_count
-  ami                    = var.ami
+  ami                    = data.aws_ami.prometheus.id
   instance_type          = var.instance_type
   subnet_id              = element(var.application_subnets,count.index)
   key_name               = var.ssh_keyname
