@@ -1,6 +1,7 @@
 # EC2 Instance
 data "aws_ami" "prometheus" {
   owners      = ["self"]
+  name_regex  = "^prometheus-ami-\\d.\\d.\\d"
   most_recent = true
   filter {
     name   = "name"
