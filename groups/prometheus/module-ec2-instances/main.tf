@@ -16,6 +16,7 @@ resource "aws_instance" "prometheus_instance" {
   subnet_id              = element(var.application_subnets,count.index)
   key_name               = var.ssh_keyname
   vpc_security_group_ids = [var.vpc_security_group_ids]
+  user_data_base64       = data.template_cloudinit_config.config.rendered
 
   root_block_device {
     volume_type = "gp2"
