@@ -4,6 +4,7 @@ variable "user_data_merge_strategy" {
 }
 
 data "template_cloudinit_config" "config" {
+  count         = var.instance_count
   gzip          = true
   base64_encode = true
 
@@ -20,4 +21,12 @@ data "template_cloudinit_config" "config" {
     })
     merge_type = var.user_data_merge_strategy
   }
+
+  part {
+    content_type = "text/cloud-config"
+    content = templatefile("${path.module}/cloud-init/files/bootstrap-commands.yml", {
+      hostname="${var.tag_environment}-${var.tag_service}-instance${count.index+1}"
+    })
+  }
+
 }

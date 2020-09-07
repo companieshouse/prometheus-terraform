@@ -16,7 +16,7 @@ resource "aws_instance" "prometheus_instance" {
   subnet_id              = element(var.application_subnets,count.index)
   key_name               = var.ssh_keyname
   vpc_security_group_ids = [var.vpc_security_group_ids]
-  user_data_base64       = data.template_cloudinit_config.config.rendered
+  user_data_base64       = data.template_cloudinit_config.config.*.rendered[count.index]
 
   root_block_device {
     volume_type = "gp2"
@@ -32,16 +32,6 @@ resource "aws_instance" "prometheus_instance" {
     AnsibleGroup = "${var.tag_service}-${var.tag_environment}"
   }
 
-  # Set hostname
-  provisioner "remote-exec" {
-    connection {
-      host        = self.private_ip
-      private_key = "${file("${var.private_key_path}")}"
-    }
-    inline = [
-      "sudo hostnamectl set-hostname ${var.tag_environment}-${var.tag_service}-instance${count.index+1}",
-    ]
-  }
 }
 
 # Outputs

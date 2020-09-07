@@ -1,0 +1,2 @@
+runcmd:
+  - hostnamectl set-hostname ${hostname}
