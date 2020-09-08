@@ -40,3 +40,12 @@ variable "ssh_keyname" {
 variable "private_key_path" {
   type    = string
 }
+
+# Concourse Prometheus
+variable "web_fqdn" {
+  type = string
+}
+
+variable "metrics_port" {
+  type = string
+}

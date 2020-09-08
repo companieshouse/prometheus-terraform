@@ -28,6 +28,8 @@ module "ec2-instances" {
   private_key_path       = var.private_key_path
   tag_environment        = var.tag_environment
   tag_service            = var.tag_service
+  web_fqdn               = var.web_fqdn
+  metrics_port           = var.metrics_port
 }
 
 module "route53-records" {
