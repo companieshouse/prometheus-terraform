@@ -28,8 +28,8 @@ module "ec2-instances" {
   private_key_path         = var.private_key_path
   tag_environment          = var.tag_environment
   tag_service              = var.tag_service
-  prometheus_web_fqdn  = var.prometheus_web_fqdn
-  prometheus_metrics_port             = var.prometheus_metrics_port
+  prometheus_web_fqdn      = var.prometheus_web_fqdn
+  prometheus_metrics_port  = var.prometheus_metrics_port
 }
 
 module "route53-records" {
@@ -47,30 +47,22 @@ module "route53-records" {
 # ------------------------------------------------------------------------------
 
 locals {
-  vpc_id                              = data.terraform_remote_state.management_vpc_eu_west_1.outputs.management_vpc_id
-  mgmt_private_subnet_cidrs           = values(data.terraform_remote_state.management_vpc_eu_west_1.outputs.management_private_subnet_cidrs)
-  mgmt_private_subnet_ids             = values(data.terraform_remote_state.management_vpc_eu_west_1.outputs.management_private_subnet_ids)
-  vpn_cidrs                           = values(data.terraform_remote_state.management_vpc_eu_west_2.outputs.vpn_cidrs)
-  internal_cidrs                      = concat(values(data.terraform_remote_state.management_vpc_eu_west_2.outputs.internal_cidrs), [data.terraform_remote_state.management_vpc_eu_west_2.outputs.dmz_subnet])
+  vpc_id                    = data.terraform_remote_state.management_vpc.outputs.management_vpc_id
+  mgmt_private_subnet_cidrs = values(data.terraform_remote_state.management_vpc.outputs.management_private_subnet_cidrs)
+  mgmt_private_subnet_ids   = values(data.terraform_remote_state.management_vpc.outputs.management_private_subnet_ids)
+  vpn_cidrs                 = values(data.terraform_remote_state.management_vpc.outputs.vpn_cidrs)
+  internal_cidrs            = concat(values(data.terraform_remote_state.management_vpc.outputs.internal_cidrs), [data.terraform_remote_state.management_vpc.outputs.dmz_subnet])
 }
 
 # ------------------------------------------------------------------------------
 # Remote State
 # ------------------------------------------------------------------------------
 
-data "terraform_remote_state" "management_vpc_eu_west_1" {
+data "terraform_remote_state" "management_vpc" {
   backend = "s3"
   config = {
-    key    = "aws-common-infrastructure-terraform/common-eu-west-1/networking.tfstate"
-    region = "eu-west-1"
+    bucket = "development-${var.region}.terraform-state.ch.gov.uk"
+    key    = "aws-common-infrastructure-terraform/common-${var.region}/networking.tfstate"
+    region = var.region
   }
 }
-
-data "terraform_remote_state" "management_vpc_eu_west_2" {
-  backend = "s3"
-  config = {
-    key    = "aws-common-infrastructure-terraform/common-eu-west-2/networking.tfstate"
-    region = "eu-west-2"
-  }
-}
-
