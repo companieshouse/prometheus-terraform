@@ -19,4 +19,4 @@ write_files:
           scheme: http
           static_configs:
           - targets:
-            - ${prometheus_metrics_port}:${metrics_port}
+            - ${prometheus_web_fqdn}:${prometheus_metrics_port}

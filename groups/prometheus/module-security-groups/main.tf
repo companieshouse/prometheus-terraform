@@ -1,4 +1,3 @@
-# Security group for the Prometheus servers
 resource "aws_security_group" "prometheus_server" {
   name        = "${var.tag_environment}-${var.tag_service}-server"
   description = "Security group for Prometheus ${var.tag_environment} instances"
@@ -36,7 +35,6 @@ resource "aws_security_group" "prometheus_server" {
   }
 }
 
-# Outputs
 output "vpc_security_group_ids" {
   value = aws_security_group.prometheus_server.id
 }

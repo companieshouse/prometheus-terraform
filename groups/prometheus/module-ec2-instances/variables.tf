@@ -18,7 +18,7 @@ variable "instance_type" {
   description = "The type of EC2 instance to be provisoned"
 }
 
-variable "metrics_port" {
+variable "prometheus_metrics_port" {
   type = string
   description = "The metrics port to be used"
 }
@@ -48,7 +48,7 @@ variable "vpc_security_group_ids" {
   description = "The ID of the VPC security group be used"
 }
 
-variable "prometheus_metrics_port" {
+variable "prometheus_web_fqdn" {
   type = string
   description = "The Prometheus target to be used, such as Concourse"
 }

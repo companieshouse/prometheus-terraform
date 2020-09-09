@@ -16,8 +16,8 @@ data "template_cloudinit_config" "config" {
   part {
     content_type              = "text/cloud-config"
     content                   = templatefile("${path.module}/cloud-init/templates/prometheus.yml.tpl", {
-      prometheus_metrics_port = var.prometheus_metrics_port
-      metrics_port            = var.metrics_port
+      prometheus_web_fqdn = var.prometheus_web_fqdn
+      prometheus_metrics_port            = var.prometheus_metrics_port
     })
     merge_type = var.user_data_merge_strategy
   }
