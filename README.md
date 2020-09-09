@@ -21,8 +21,8 @@ The following filesystem structure is used in this project:
 ```
 prometheus-terraform
   ├── terraform/               - General terraform config
-  └── module-ec2-instances/    - Config specific to ec2 instances
-  └── module-route53-records/  - Config for creating and editing route53 records
+  ├── module-ec2-instances/    - Config specific to ec2 instances
+  ├── module-route53-records/  - Config for creating and editing route53 records
   └── module-security-groups/  - Config for creating and editing security groups
 ```
 ## Configuration
