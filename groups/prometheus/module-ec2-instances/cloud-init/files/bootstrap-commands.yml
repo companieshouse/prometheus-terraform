@@ -1,2 +1,4 @@
 runcmd:
   - hostnamectl set-hostname ${hostname}
+  - systemctl enable smartpan
+  - systemctl start smartpan
