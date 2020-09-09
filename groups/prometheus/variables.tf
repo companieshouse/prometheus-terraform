@@ -42,7 +42,7 @@ variable "private_key_path" {
 }
 
 # Concourse Prometheus
-variable "web_fqdn" {
+variable "prometheus_metrics_port" {
   type = string
 }
 

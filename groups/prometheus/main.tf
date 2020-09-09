@@ -10,26 +10,26 @@ module "security-groups" {
   source           = "./module-security-groups"
   region           = var.region
   vpc_id           = local.vpc_id
-  ssh_cidrs        = concat(local.internal_cidrs,local.vpn_cidrs)
+  ssh_cidrs        = concat(local.internal_cidrs, local.vpn_cidrs)
   prometheus_cidrs = concat(local.mgmt_private_subnet_cidrs)
   tag_environment  = var.tag_environment
   tag_service      = var.tag_service
 }
 
 module "ec2-instances" {
-  source                 = "./module-ec2-instances"
-  instance_count         = var.instance_count
-  instance_type          = var.instance_type
-  ami_version_pattern    = var.ami_version_pattern
-  application_subnets    = local.mgmt_private_subnet_ids
-  vpc_security_group_ids = module.security-groups.vpc_security_group_ids
-  zone_name              = var.zone_name
-  ssh_keyname            = var.ssh_keyname
-  private_key_path       = var.private_key_path
-  tag_environment        = var.tag_environment
-  tag_service            = var.tag_service
-  web_fqdn               = var.web_fqdn
-  metrics_port           = var.metrics_port
+  source                   = "./module-ec2-instances"
+  instance_count           = var.instance_count
+  instance_type            = var.instance_type
+  ami_version_pattern      = var.ami_version_pattern
+  application_subnets      = local.mgmt_private_subnet_ids
+  vpc_security_group_ids   = module.security-groups.vpc_security_group_ids
+  zone_name                = var.zone_name
+  ssh_keyname              = var.ssh_keyname
+  private_key_path         = var.private_key_path
+  tag_environment          = var.tag_environment
+  tag_service              = var.tag_service
+  prometheus_metrics_port  = var.prometheus_metrics_port
+  metrics_port             = var.metrics_port
 }
 
 module "route53-records" {

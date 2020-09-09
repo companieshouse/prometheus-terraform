@@ -1,4 +1,3 @@
-# EC2 Instance
 data "aws_ami" "prometheus" {
   owners      = ["self"]
   name_regex  = "^prometheus-ami-\\d.\\d.\\d"
@@ -34,7 +33,6 @@ resource "aws_instance" "prometheus_instance" {
 
 }
 
-# Outputs
 output "ec2_instance_private_ip" {
   value = aws_instance.prometheus_instance[*].private_ip
 }
