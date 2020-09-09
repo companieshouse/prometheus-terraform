@@ -56,15 +56,11 @@ The following structure has been implemented for `cloud-init` configuration for 
 ```
 groups
   ├── prometheus
-  │    ├── module-route53-records  - directory for route53 DNS records
-  │    ├── module-security-groups  - directory for security groups
   │    ├── module-ec2-instances    - directory for EC2 configuration, including cloud-init
   │    │    └── cloud-init         
   │    │        ├── files          - directory for YAML files that contain no variable interpolations
   │    │        ├── templates      - directory for templates that include variable interpolations
   │    │        └── cloud-init.tf  - main cloud-init configuration definition for this module
-  │    ├── main.tf                 - main terraform file
-  │    └── variables.tf           - main variables file
   └── ...
 
 
