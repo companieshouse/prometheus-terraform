@@ -25,7 +25,7 @@ data "template_cloudinit_config" "config" {
   part {
     content_type  = "text/cloud-config"
     content       = templatefile("${path.module}/cloud-init/files/bootstrap-commands.yml", {
-      hostname    ="${var.tag_environment}-${var.tag_service}-instance${count.index+1}"
+      hostname    ="${var.environment}-${var.tag_service}-instance${count.index+1}"
     })
   }
 

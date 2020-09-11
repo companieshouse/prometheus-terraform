@@ -12,7 +12,7 @@ module "security-groups" {
   vpc_id           = local.vpc_id
   ssh_cidrs        = concat(local.internal_cidrs, local.vpn_cidrs)
   prometheus_cidrs = concat(local.mgmt_private_subnet_cidrs)
-  tag_environment  = var.tag_environment
+  environment  = var.environment
   tag_service      = var.tag_service
 }
 
@@ -26,7 +26,7 @@ module "ec2-instances" {
   zone_name                = var.zone_name
   ssh_keyname              = var.ssh_keyname
   private_key_path         = var.private_key_path
-  tag_environment          = var.tag_environment
+  environment          = var.environment
   tag_service              = var.tag_service
   prometheus_web_fqdn      = var.prometheus_web_fqdn
   prometheus_metrics_port  = var.prometheus_metrics_port
@@ -38,7 +38,7 @@ module "route53-records" {
   zone_id                  = var.zone_id
   zone_name                = var.zone_name
   ec2_instance_private_ips = module.ec2-instances.ec2_instance_private_ip[*]
-  tag_environment          = var.tag_environment
+  environment          = var.environment
   tag_service              = var.tag_service
 }
 

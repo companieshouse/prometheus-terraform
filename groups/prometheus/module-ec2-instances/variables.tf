@@ -33,7 +33,7 @@ variable "ssh_keyname" {
   description = "The ssh key to be used"
 }
 
-variable "tag_environment" {
+variable "environment" {
   type = string
   description = "The environment name to be used when creating AWS resources"
 }

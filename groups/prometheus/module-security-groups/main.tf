@@ -1,6 +1,6 @@
 resource "aws_security_group" "prometheus_server" {
-  name        = "${var.tag_environment}-${var.tag_service}-server"
-  description = "Security group for Prometheus ${var.tag_environment} instances"
+  name        = "${var.environment}-${var.tag_service}-server"
+  description = "Security group for Prometheus ${var.environment} instances"
   vpc_id      = var.vpc_id
 
   ingress {
@@ -28,10 +28,10 @@ resource "aws_security_group" "prometheus_server" {
   }
 
   tags = {
-    Name         = "${var.tag_environment}-${var.tag_service}-security-group"
-    Environment  = var.tag_environment
+    Name         = "${var.environment}-${var.tag_service}-security-group"
+    Environment  = var.environment
     Service      = var.tag_service
-    AnsibleGroup = "${var.tag_service}-${var.tag_environment}"
+    AnsibleGroup = "${var.tag_service}-${var.environment}"
   }
 }
 

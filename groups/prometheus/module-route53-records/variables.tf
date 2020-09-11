@@ -3,7 +3,7 @@ variable "ec2_instance_private_ips" {
   description = "The number of EC2 instances to be provisoned"
 }
 
-variable "tag_environment" {
+variable "environment" {
   type = string
   description = "The environment name to be used when creating AWS resources"
 }

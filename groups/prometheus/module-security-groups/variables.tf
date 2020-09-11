@@ -19,7 +19,7 @@ variable "prometheus_cidrs" {
 
 }
 
-variable "tag_environment" {
+variable "environment" {
   type = string
   description = "The environment name to be used when creating AWS resources"
 }
