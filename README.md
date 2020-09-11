@@ -15,16 +15,6 @@ AWS credentials are selected based on the value of the `AWS_PROFILE` environment
 
 These scripts make use of Infrastructure as Code (IaC) and depend on Terraform as the primary tool for managing and applying infrastructural changes. Documentation can be found for this tool on the [Terraform Guides](https://www.terraform.io/guides/index.html) webpage.
 
-## Project hierarchy
-
-The following filesystem structure is used in this project:
-```
-prometheus-terraform
-  ├── terraform/               - General terraform config
-  ├── module-ec2-instances/    - Config specific to ec2 instances
-  ├── module-route53-records/  - Config for creating and editing route53 records
-  └── module-security-groups/  - Config for creating and editing security groups
-```
 ## Configuration
 ### Terraform Variables
 
@@ -56,11 +46,16 @@ The following structure has been implemented for `cloud-init` configuration for 
 ```
 groups
   ├── prometheus
-  │    ├── module-ec2-instances    - directory for EC2 configuration, including cloud-init
-  │    │    └── cloud-init         
-  │    │        ├── files          - directory for YAML files that contain no variable interpolations
-  │    │        ├── templates      - directory for templates that include variable interpolations
-  │    │        └── cloud-init.tf  - main cloud-init configuration definition for this module
+  │    ├── module-prometheus       - directory for EC2 configuration, including cloud-init
+  │    │    ├── cloud-init         
+  │    │    │   ├── files          - directory for YAML files that contain no variable interpolations
+  │    │    │   └── templates      - directory for templates that include variable interpolations
+  │    │    ├── cloud-init.tf      - main cloud-init configuration definition for this module
+  │    │    ├── ec2.tf             - configuration file for ec2 instances
+  │    │    ├── route53.tf         - configuration file for route 53 records
+  │    │    ├── security-groups.tf - configuration file for security groups
+  │    │    └── variables          - module variables definitions
+  │    └── profiles                - folder for profile configuration  
   └── ...
 
 
