@@ -34,7 +34,3 @@ resource "aws_security_group" "prometheus_server" {
     AnsibleGroup = "${var.service}-${var.environment}"
   }
 }
-
-output "vpc_security_group_ids" {
-  value = aws_security_group.prometheus_server.id
-}

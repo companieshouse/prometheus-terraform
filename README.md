@@ -37,7 +37,7 @@ environment  | AWS environment in which to create the infrastructure  | developm
 prometheus_web_fqdn | Prometheus targets | web.
 prometheus_metrics_port | The desired port | 9999
 instance_count | How many instances you want | 1
-tag_environment | Which environment you want to tag | my-environment
+environment | The environment name to be used when creating AWS resources | my-environment
 ssh_keyname | The keyname of the ssh profile you want to use | my-environment
 private_key_path | The path of your private ssh key | "~/.mysshkey"
 zone_id | The DNS zone id you want to use | 12345

@@ -14,7 +14,7 @@ resource "aws_instance" "prometheus_instance" {
   instance_type          = var.instance_type
   subnet_id              = element(var.application_subnets,count.index)
   key_name               = var.ssh_keyname
-  vpc_security_group_ids = [var.vpc_security_group_ids]
+  vpc_security_group_ids = [aws_security_group.prometheus_server.id]
   user_data_base64       = data.template_cloudinit_config.config.*.rendered[count.index]
 
   root_block_device {
@@ -31,8 +31,4 @@ resource "aws_instance" "prometheus_instance" {
     AnsibleGroup = "${var.service}-${var.environment}"
   }
 
-}
-
-output "ec2_instance_private_ip" {
-  value = aws_instance.prometheus_instance[*].private_ip
 }
