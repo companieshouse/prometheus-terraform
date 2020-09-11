@@ -1,8 +1,3 @@
-variable "instance_count" {
-  type = number
-  description = "The number of EC2 instances to be provisoned"
-}
-
 variable "ami_version_pattern" {
   type = string
   description = "The AMI version pattern to be used"
@@ -18,6 +13,11 @@ variable "environment" {
   description = "The environment name to be used when creating AWS resources"
 }
 
+variable "instance_count" {
+  type = number
+  description = "The number of EC2 instances to be provisoned"
+}
+
 variable "instance_type" {
   type = string
   description = "The type of EC2 instance to be provisoned"
@@ -28,6 +28,11 @@ variable "prometheus_metrics_port" {
   description = "The metrics port to be used"
 }
 
+variable "prometheus_web_fqdn" {
+  type = string
+  description = "The Prometheus target to be used, such as Concourse"
+}
+
 variable "private_key_path" {
   type = string
   description = "The private key path to be used"
@@ -36,7 +41,6 @@ variable "private_key_path" {
 variable "prometheus_cidrs" {
   type = list(string)
   description = "The Prometheus CIDR to be used"
-
 }
 
 variable "region" {
@@ -62,11 +66,6 @@ variable "ssh_keyname" {
 variable "vpc_id" {
   type = string
   description = "The ID of the VPC to be used"
-}
-
-variable "prometheus_web_fqdn" {
-  type = string
-  description = "The Prometheus target to be used, such as Concourse"
 }
 
 variable "zone_id" {

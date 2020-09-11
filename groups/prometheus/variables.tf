@@ -4,6 +4,11 @@ variable "ami_version_pattern" {
   description = "The AMI version pattern to be used"
 }
 
+variable "environment" {
+  type = string
+  description = "The environment name to be used when creating AWS resources"
+}
+
 variable "instance_count" {
   type = string
   description = "The number of EC2 instances to be provisoned"
@@ -38,11 +43,6 @@ variable "region" {
 variable "ssh_keyname" {
   type = string
   description = "The ssh key to be used"
-}
-
-variable "environment" {
-  type = string
-  description = "The environment name to be used when creating AWS resources"
 }
 
 variable "service" {
