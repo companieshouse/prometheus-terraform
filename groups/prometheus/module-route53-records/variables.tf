@@ -8,7 +8,7 @@ variable "environment" {
   description = "The environment name to be used when creating AWS resources"
 }
 
-variable "tag_service" {
+variable "service" {
   type = string
   escription = "The service name to be used when creating AWS resources"
 }

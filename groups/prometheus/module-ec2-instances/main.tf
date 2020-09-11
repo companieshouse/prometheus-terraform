@@ -23,12 +23,12 @@ resource "aws_instance" "prometheus_instance" {
   }
 
   tags = {
-    Name         = "${var.environment}-${var.tag_service}-instance${count.index+1}"
+    Name         = "${var.environment}-${var.service}-instance${count.index+1}"
     Environment  = var.environment
-    Service      = var.tag_service
-    HostName     = "${var.tag_service}.${var.environment}.${var.zone_name}"
+    Service      = var.service
+    HostName     = "${var.service}.${var.environment}.${var.zone_name}"
     Domain       = var.zone_name
-    AnsibleGroup = "${var.tag_service}-${var.environment}"
+    AnsibleGroup = "${var.service}-${var.environment}"
   }
 
 }
