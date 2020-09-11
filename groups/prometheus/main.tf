@@ -7,23 +7,23 @@ terraform {
 }
 
 module "prometheus" {
-  source                   = "./module-prometheus"
   ami_version_pattern      = var.ami_version_pattern
+  application_subnets      = local.mgmt_private_subnet_ids
   environment              = var.environment
   instance_count           = var.instance_count
   instance_type            = var.instance_type
-  application_subnets      = local.mgmt_private_subnet_ids
+  private_key_path         = var.private_key_path
+  prometheus_cidrs         = concat(local.mgmt_private_subnet_cidrs)
   prometheus_metrics_port  = var.prometheus_metrics_port
   prometheus_web_fqdn      = var.prometheus_web_fqdn
-  service                  = var.service
-  ssh_keyname              = var.ssh_keyname
-  private_key_path         = var.private_key_path
   region                   = var.region
+  service                  = var.service
+  source                   = "./module-prometheus"
+  ssh_cidrs                = concat(local.internal_cidrs, local.vpn_cidrs)
+  ssh_keyname              = var.ssh_keyname
   vpc_id                   = local.vpc_id
   zone_id                  = var.zone_id
   zone_name                = var.zone_name
-  ssh_cidrs                = concat(local.internal_cidrs, local.vpn_cidrs)
-  prometheus_cidrs         = concat(local.mgmt_private_subnet_cidrs)
 }
 
 # ------------------------------------------------------------------------------
