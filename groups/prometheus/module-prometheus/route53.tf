@@ -4,5 +4,5 @@ resource "aws_route53_record" "prometheus_server" {
   name     = "${var.service}-server${count.index+1}.${var.environment}.${var.zone_name}"
   type     = "A"
   ttl      = "300"
-  records  = aws_instance.prometheus_instance[*].private_ip
+  records  = [aws_instance.prometheus_instance[count.index].private_ip]
 }
