@@ -17,6 +17,14 @@ write_files:
           scrape_timeout: 15s
           metrics_path: /metrics
           scheme: http
-          static_configs:
-          - targets:
-            - ${prometheus_web_fqdn}:${prometheus_metrics_port}
+          ec2_sd_configs:
+            - region: eu-west-2
+              port: ${prometheus_metrics_port}
+          relabel_configs:
+              # Only monitor Concourse instances
+            - source_labels: [__meta_ec2_tag_Name]
+              regex: ${prometheus_tag_regex}
+              action: keep
+              # Use the instance ID as the instance label
+            - source_labels: [__meta_ec2_instance_id]
+              target_label: instance

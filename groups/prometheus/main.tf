@@ -15,7 +15,7 @@ module "prometheus" {
   private_key_path         = var.private_key_path
   prometheus_cidrs         = concat(local.mgmt_private_subnet_cidrs)
   prometheus_metrics_port  = var.prometheus_metrics_port
-  prometheus_web_fqdn      = var.prometheus_web_fqdn
+  prometheus_tag_regex     = var.prometheus_tag_regex
   region                   = var.region
   service                  = var.service
   source                   = "./module-prometheus"

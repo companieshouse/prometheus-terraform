@@ -24,7 +24,7 @@ Variable    | Description | Examples
 -------------|------------ |---------------
 aws_region  | AWS region to create the infrastructure  | eu-west-2
 environment  | AWS environment in which to create the infrastructure  | development
-prometheus_web_fqdn | Prometheus targets | web.
+prometheus_tag_regex | Prometheus tag | my-instance-tag
 prometheus_metrics_port | The desired port | 9999
 instance_count | How many instances you want | 1
 environment | The environment name to be used when creating AWS resources | my-environment
