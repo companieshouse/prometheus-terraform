@@ -23,7 +23,7 @@ write_files:
           relabel_configs:
               # Only monitor Concourse instances
             - source_labels: [__meta_ec2_tag_Name]
-              regex: ${prometheus_tag_regex}
+              regex: ${tag_name_regex}
               action: keep
               # Use the instance ID as the instance label
             - source_labels: [__meta_ec2_instance_id]

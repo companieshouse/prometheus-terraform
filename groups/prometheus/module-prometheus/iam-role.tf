@@ -1,6 +1,5 @@
 data "aws_iam_policy_document" "ec2_readonly" {
   statement {
-    # sid = "1"
     actions = ["sts:AssumeRole"]
     principals {
         type = "Service"
