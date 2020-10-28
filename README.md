@@ -24,12 +24,12 @@ Variable    | Description | Examples
 -------------|------------ |---------------
 aws_region  | AWS region to create the infrastructure  | eu-west-2
 environment  | AWS environment in which to create the infrastructure  | development
-prometheus_metrics_port | The desired port | 9999
-tag_name_regex | Prometheus tag | my-instance-tag
-instance_count | How many instances you want | 1
 environment | The environment name to be used when creating AWS resources | my-environment
-ssh_keyname | The keyname of the ssh profile you want to use | my-environment
+instance_count | How many instances you want | 1
+prometheus_metrics_port | The desired port | 9999
 private_key_path | The path of your private ssh key | "~/.mysshkey"
+ssh_keyname | The keyname of the ssh profile you want to use | my-environment
+tag_name_regex | Prometheus tag | my-instance-tag
 zone_id | The DNS zone id you want to use | 12345
 zone_name | The DNS zone name you want to use | myzone.abc.com
 
