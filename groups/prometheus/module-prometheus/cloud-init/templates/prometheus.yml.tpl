@@ -21,7 +21,6 @@ write_files:
             - region: eu-west-2
               port: ${prometheus_metrics_port}
           relabel_configs:
-              # Only monitor Concourse instances
             - source_labels: [__meta_ec2_tag_Name]
               regex: ${tag_name_regex}
               action: keep
