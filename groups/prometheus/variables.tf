@@ -32,7 +32,7 @@ variable "prometheus_metrics_port" {
 
 variable "tag_name_regex" {
   type = string
-  description = "The Prometheus tag to be used for discovering EC2 instances"
+  description = "The tag name regex uses to discover EC2 instances"
 }
 
 variable "region" {
