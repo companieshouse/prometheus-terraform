@@ -24,7 +24,6 @@ Variable    | Description | Examples
 -------------|------------ |---------------
 aws_region  | AWS region to create the infrastructure  | eu-west-2
 environment  | AWS environment in which to create the infrastructure  | development
-environment | The environment name to be used when creating AWS resources | my-environment
 instance_count | How many instances you want | 1
 prometheus_metrics_port | The desired port | 9999
 private_key_path | The path of your private ssh key | "~/.mysshkey"
