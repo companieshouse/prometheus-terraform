@@ -11,6 +11,7 @@ data "aws_ami" "prometheus" {
 resource "aws_instance" "prometheus_instance" {
   count                  = var.instance_count
   ami                    = data.aws_ami.prometheus.id
+  iam_instance_profile   = aws_iam_role.ec2_readonly.name
   instance_type          = var.instance_type
   subnet_id              = element(var.application_subnets,count.index)
   key_name               = var.ssh_keyname

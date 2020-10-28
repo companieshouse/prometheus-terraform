@@ -28,9 +28,9 @@ variable "prometheus_metrics_port" {
   description = "The metrics port to be used"
 }
 
-variable "prometheus_web_fqdn" {
+variable "tag_name_regex" {
   type = string
-  description = "The Prometheus target to be used, such as Concourse"
+  description = "The tag name regex uses to discover EC2 instances"
 }
 
 variable "private_key_path" {
