@@ -15,7 +15,7 @@ resource "aws_security_group" "prometheus_server" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = concat(var.ssh_cidrs,var.prometheus_cidrs)
+    cidr_blocks = var.web_cidrs
     description = "Admin UI access"
   }
 

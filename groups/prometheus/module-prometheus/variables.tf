@@ -68,6 +68,11 @@ variable "vpc_id" {
   description = "The ID of the VPC to be used"
 }
 
+variable "web_cidrs" {
+  type = list(string)
+  description = "The CIDRs to grant web access to"
+}
+
 variable "zone_id" {
   type = string
   description = "The zone ID to be used"
