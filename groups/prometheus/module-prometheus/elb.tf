@@ -37,8 +37,10 @@ resource "aws_lb_target_group_attachment" "prometheus_server_web" {
 }
 resource "aws_lb_listener" "prometheus_server_listener_80" {
   load_balancer_arn = aws_lb.prometheus_server.arn
-  port              = "80"
-  protocol          = "HTTP"
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = var.ssl_certificate_id
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.prometheus_server_web.arn

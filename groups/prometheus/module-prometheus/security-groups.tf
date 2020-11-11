@@ -12,8 +12,8 @@ resource "aws_security_group" "prometheus_server" {
   }
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = var.web_cidrs
     description = "Admin UI access"

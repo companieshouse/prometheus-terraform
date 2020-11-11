@@ -63,6 +63,11 @@ variable "ssh_keyname" {
   description = "The ssh key to be used"
 }
 
+variable "ssl_certificate_id" {
+  type        = string
+  description = "The ARN of the certificate for https access through the ALB."
+}
+
 variable "vpc_id" {
   type = string
   description = "The ID of the VPC to be used"
