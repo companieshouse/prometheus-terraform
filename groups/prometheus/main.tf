@@ -2,6 +2,18 @@ provider "aws" {
   region = var.region
 }
 
+provider "vault" {
+  auth_login {
+    path = "auth/userpass/login/${var.vault_username}"
+    parameters = {
+      password = var.vault_password
+    }
+  }
+}
+data "vault_generic_secret" "secrets" {
+  path = "applications/${var.aws_profile}/${var.environment}/${var.service}"
+}
+
 terraform {
   backend "s3" {}
 }

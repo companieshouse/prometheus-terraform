@@ -4,6 +4,11 @@ variable "ami_version_pattern" {
   description = "The AMI version pattern to be used"
 }
 
+variable "aws_profile" {
+  type        = string
+  description = "The AWS profile to use for deployment."
+}
+
 variable "environment" {
   type = string
   description = "The environment name to be used when creating AWS resources"
@@ -72,6 +77,15 @@ variable "service" {
   type = string
   default = "prometheus"
   description = "The service name to be used when creating AWS resources"
+}
+
+variable "vault_username" {
+  type        = string
+  description = "The username used by the Vault provider."
+}
+variable "vault_password" {
+  type        = string
+  description = "The password used by the Vault provider."
 }
 
 variable "zone_id" {
