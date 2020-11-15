@@ -25,6 +25,29 @@ variable "private_key_path" {
   description = "The private key path to be used"
 }
 
+variable "github_exporter_docker_image" {
+  type = string
+  default = "infinityworks/github-exporter"
+  description = "The name of the exporter container image."
+}
+
+variable "github_exporter_docker_tag" {
+  type = string
+  default = "release-1.0.2"
+  description = "The version tag of the exporter container image."
+}
+
+variable "github_exporter_port" {
+  type = string
+  default = "9171"
+  description = "The port exposed by the exporter container."
+}
+
+variable "github_exporter_token" {
+  type = string
+  description = "The Github API token of the user to gather metrics of."
+}
+
 variable "prometheus_metrics_port" {
   type = string
   description = "The metrics port to be used"
