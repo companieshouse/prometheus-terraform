@@ -50,6 +50,7 @@ variable "github_exporter_port" {
 
 variable "github_exporter_token" {
   type = string
+  default = ""
   description = "The Github API token of the user to gather metrics of."
 }
 
