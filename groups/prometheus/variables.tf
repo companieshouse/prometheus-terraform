@@ -56,6 +56,7 @@ variable "github_exporter_token" {
 
 variable "prometheus_metrics_port" {
   type = string
+  default = "9391"
   description = "The metrics port to be used"
 }
 
