@@ -51,11 +51,6 @@ variable "service" {
   description = "The service name to be used when creating AWS resources"
 }
 
-variable "ssl_certificate_id" {
-  type        = string
-  description = "The ARN of the certificate for https access through the ALB."
-}
-
 variable "zone_id" {
   type  = string
   description = "The ID of the zone to be used"

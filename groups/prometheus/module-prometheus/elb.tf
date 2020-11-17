@@ -35,12 +35,44 @@ resource "aws_lb_target_group_attachment" "prometheus_server_web" {
   target_id        = aws_instance.prometheus_instance[count.index].private_ip
   port             = 9090
 }
-resource "aws_lb_listener" "prometheus_server_listener_80" {
-  load_balancer_arn = aws_lb.prometheus_server.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = var.ssl_certificate_id
+
+# Configuration for Certiicate
+
+resource "aws_acm_certificate" "certificate" {
+  domain_name               = "${var.service}.${var.environment}.${var.zone_name}"
+  subject_alternative_names = ["*.${var.service}.${var.environment}.${var.zone_name}"]
+  validation_method         = "DNS"
+}
+
+resource "aws_route53_record" "certificate_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.certificate.domain_validation_options : dvo.domain_name => {
+      name    = dvo.resource_record_name
+      type    = dvo.resource_record_type
+      record  = dvo.resource_record_value
+    }
+  }
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = var.zone_id
+}
+
+resource "aws_acm_certificate_validation" "certificate" {
+  certificate_arn         = aws_acm_certificate.certificate.arn
+  validation_record_fqdns = [for record in aws_route53_record.certificate_validation : record.fqdn]
+}
+
+# Listener configuration
+
+resource "aws_lb_listener" "prometheus_server_listener_443" {
+  load_balancer_arn  = aws_lb.prometheus_server.arn
+  port               = "443"
+  protocol           = "HTTPS"
+  certificate_arn    = aws_acm_certificate_validation.certificate.certificate_arn
+  ssl_policy         = "ELBSecurityPolicy-2016-08"
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.prometheus_server_web.arn
