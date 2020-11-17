@@ -36,7 +36,7 @@ resource "aws_lb_target_group_attachment" "prometheus_server_web" {
   port             = 9090
 }
 
-# Configuration for Certiicate
+# Configuration for Certificate
 
 resource "aws_acm_certificate" "certificate" {
   domain_name               = "${var.service}.${var.environment}.${var.zone_name}"
