@@ -78,3 +78,19 @@ resource "aws_lb_listener" "prometheus_server_listener_443" {
     target_group_arn = aws_lb_target_group.prometheus_server_web.arn
   }
 }
+
+# Create a listener resource to redirect HTTP to HTTPS
+
+resource "aws_lb_listener" "prometheus_server_listener_80_redirect" {
+  load_balancer_arn = aws_lb.prometheus_server.arn
+  port              = "80"
+  protocol          = "HTTP"
+  default_action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
