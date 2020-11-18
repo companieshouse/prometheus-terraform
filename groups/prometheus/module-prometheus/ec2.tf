@@ -23,6 +23,10 @@ resource "aws_instance" "prometheus_instance" {
     volume_size = 20
   }
 
+  volume_tags = {
+    Snapshot = "daily"
+  }
+
   tags = {
     Name         = "${var.environment}-${var.service}-instance${count.index+1}"
     Environment  = var.environment
