@@ -38,8 +38,8 @@ module "prometheus" {
   ssh_cidrs                    = concat(local.internal_cidrs, local.vpn_cidrs)
   ssh_keyname                  = var.ssh_keyname
   vpc_id                       = local.vpc_id
-  zone_id                      = var.zone_id
-  zone_name                    = var.zone_name
+  dns_zone_id                  = var.dns_zone_id
+  dns_zone_name                = var.dns_zone_name
 }
 
 # ------------------------------------------------------------------------------

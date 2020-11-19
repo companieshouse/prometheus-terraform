@@ -93,12 +93,12 @@ variable "web_cidrs" {
   description = "The CIDRs to grant web access to"
 }
 
-variable "zone_id" {
+variable "dns_zone_id" {
   type = string
   description = "The zone ID to be used"
 }
 
-variable "zone_name" {
+variable "dns_zone_name" {
   type = string
   description = "The zone name to be used"
 }

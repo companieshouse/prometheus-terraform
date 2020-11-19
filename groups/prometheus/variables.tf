@@ -90,12 +90,12 @@ variable "vault_password" {
   description = "Password for connecting to Vault - usually supplied through TF_VARS"
 }
 
-variable "zone_id" {
+variable "dns_zone_id" {
   type  = string
   description = "The ID of the zone to be used"
 }
 
-variable "zone_name" {
+variable "dns_zone_name" {
   type = string
   description = "The zone name to be used"
 }
