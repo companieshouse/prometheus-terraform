@@ -83,11 +83,11 @@ variable "service" {
 
 variable "vault_username" {
   type        = string
-  description = "The username used by the Vault provider."
+  description = "Username for connecting to Vault - usually supplied through TF_VARS"
 }
 variable "vault_password" {
   type        = string
-  description = "The password used by the Vault provider."
+  description = "Password for connecting to Vault - usually supplied through TF_VARS"
 }
 
 variable "zone_id" {
