@@ -27,3 +27,11 @@ write_files:
               # Use the instance ID as the instance label
             - source_labels: [__meta_ec2_instance_id]
               target_label: instance
+
+        - job_name: github
+          static_configs:
+          - targets: ['localhost:9171']
+          scrape_interval: 1m
+          scrape_timeout: 1m
+          metrics_path: /metrics
+          scheme: http

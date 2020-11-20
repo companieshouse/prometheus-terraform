@@ -29,8 +29,8 @@ private_key_path | The path of your private ssh key | "~/.mysshkey"
 prometheus_metrics_port | The desired port | 9999
 ssh_keyname | The keyname of the ssh profile you want to use | my-environment
 tag_name_regex | Prometheus tag | my-instance-tag
-zone_id | The DNS zone id you want to use | 12345
-zone_name | The DNS zone name you want to use | myzone.abc.com
+dns_zone_id | The DNS zone id you want to use | 12345
+dns_zone_name | The DNS zone name you want to use | myzone.abc.com
 
 ## State
 

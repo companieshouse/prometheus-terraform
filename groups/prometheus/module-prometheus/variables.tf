@@ -23,6 +23,26 @@ variable "instance_type" {
   description = "The type of EC2 instance to be provisoned"
 }
 
+variable "github_exporter_docker_image" {
+  type = string
+  description = "The name of the exporter container image."
+}
+
+variable "github_exporter_docker_tag" {
+  type = string
+  description = "The version tag of the exporter container image."
+}
+
+variable "github_exporter_port" {
+  type = string
+  description = "The port exposed by the exporter container."
+}
+
+variable "github_exporter_token" {
+  type = string
+  description = "The Github API token of the user to gather metrics of."
+}
+
 variable "prometheus_metrics_port" {
   type = string
   description = "The metrics port to be used"
@@ -73,12 +93,12 @@ variable "web_cidrs" {
   description = "The CIDRs to grant web access to"
 }
 
-variable "zone_id" {
+variable "dns_zone_id" {
   type = string
   description = "The zone ID to be used"
 }
 
-variable "zone_name" {
+variable "dns_zone_name" {
   type = string
   description = "The zone name to be used"
 }

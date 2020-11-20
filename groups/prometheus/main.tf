@@ -2,29 +2,44 @@ provider "aws" {
   region = var.region
 }
 
+provider "vault" {
+  auth_login {
+    path = "auth/userpass/login/${var.vault_username}"
+    parameters = {
+      password = var.vault_password
+    }
+  }
+}
+data "vault_generic_secret" "secrets" {
+  path = "applications/${var.aws_profile}/${var.environment}/${var.service}"
+}
+
 terraform {
   backend "s3" {}
 }
 
 module "prometheus" {
-  ami_version_pattern      = var.ami_version_pattern
-  application_subnets      = local.mgmt_private_subnet_ids
-  environment              = var.environment
-  instance_count           = var.instance_count
-  instance_type            = var.instance_type
-  private_key_path         = var.private_key_path
-  prometheus_cidrs         = concat(local.mgmt_private_subnet_cidrs)
-  prometheus_metrics_port  = var.prometheus_metrics_port
-  tag_name_regex           = var.tag_name_regex
-  region                   = var.region
-  service                  = var.service
-  source                   = "./module-prometheus"
-  ssh_cidrs                = concat(local.internal_cidrs, local.vpn_cidrs)
-  ssh_keyname              = var.ssh_keyname
-  vpc_id                   = local.vpc_id
-  web_cidrs                = concat(local.internal_cidrs, local.vpn_cidrs)
-  zone_id                  = var.zone_id
-  zone_name                = var.zone_name
+  ami_version_pattern          = var.ami_version_pattern
+  application_subnets          = local.mgmt_private_subnet_ids
+  environment                  = var.environment
+  instance_count               = var.instance_count
+  instance_type                = var.instance_type
+  private_key_path             = var.private_key_path
+  prometheus_cidrs             = concat(local.mgmt_private_subnet_cidrs)
+  github_exporter_port         = var.github_exporter_port
+  github_exporter_token        = data.vault_generic_secret.secrets.data["github_exporter_token"]
+  github_exporter_docker_image = var.github_exporter_docker_image
+  github_exporter_docker_tag   = var.github_exporter_docker_tag
+  prometheus_metrics_port      = var.prometheus_metrics_port
+  tag_name_regex               = var.tag_name_regex
+  region                       = var.region
+  service                      = var.service
+  source                       = "./module-prometheus"
+  ssh_cidrs                    = concat(local.internal_cidrs, local.vpn_cidrs)
+  ssh_keyname                  = var.ssh_keyname
+  vpc_id                       = local.vpc_id
+  dns_zone_id                  = var.dns_zone_id
+  dns_zone_name                = var.dns_zone_name
 }
 
 # ------------------------------------------------------------------------------

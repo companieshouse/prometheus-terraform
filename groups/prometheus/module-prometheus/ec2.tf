@@ -31,8 +31,8 @@ resource "aws_instance" "prometheus_instance" {
     Name         = "${var.environment}-${var.service}-instance${count.index+1}"
     Environment  = var.environment
     Service      = var.service
-    HostName     = "${var.service}.${var.environment}.${var.zone_name}"
-    Domain       = var.zone_name
+    HostName     = "${var.service}.${var.environment}.${var.dns_zone_name}"
+    Domain       = var.dns_zone_name
     AnsibleGroup = "${var.service}-${var.environment}"
   }
 

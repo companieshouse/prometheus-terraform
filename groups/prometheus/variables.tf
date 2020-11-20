@@ -4,6 +4,11 @@ variable "ami_version_pattern" {
   description = "The AMI version pattern to be used"
 }
 
+variable "aws_profile" {
+  type        = string
+  description = "The AWS profile to use for deployment."
+}
+
 variable "environment" {
   type = string
   description = "The environment name to be used when creating AWS resources"
@@ -25,8 +30,33 @@ variable "private_key_path" {
   description = "The private key path to be used"
 }
 
+variable "github_exporter_docker_image" {
+  type = string
+  default = "infinityworks/github-exporter"
+  description = "The name of the exporter container image."
+}
+
+variable "github_exporter_docker_tag" {
+  type = string
+  default = "release-1.0.2"
+  description = "The version tag of the exporter container image."
+}
+
+variable "github_exporter_port" {
+  type = string
+  default = "9171"
+  description = "The port exposed by the exporter container."
+}
+
+variable "github_exporter_token" {
+  type = string
+  default = ""
+  description = "The Github API token of the user to gather metrics of."
+}
+
 variable "prometheus_metrics_port" {
   type = string
+  default = "9391"
   description = "The metrics port to be used"
 }
 
@@ -51,12 +81,21 @@ variable "service" {
   description = "The service name to be used when creating AWS resources"
 }
 
-variable "zone_id" {
+variable "vault_username" {
+  type        = string
+  description = "Username for connecting to Vault - usually supplied through TF_VARS"
+}
+variable "vault_password" {
+  type        = string
+  description = "Password for connecting to Vault - usually supplied through TF_VARS"
+}
+
+variable "dns_zone_id" {
   type  = string
   description = "The ID of the zone to be used"
 }
 
-variable "zone_name" {
+variable "dns_zone_name" {
   type = string
   description = "The zone name to be used"
 }

@@ -26,6 +26,10 @@ data "template_cloudinit_config" "config" {
     content_type  = "text/cloud-config"
     content       = templatefile("${path.module}/cloud-init/files/bootstrap-commands.yml", {
       hostname    ="${var.environment}-${var.service}-instance${count.index+1}"
+      github_exporter_port         = var.github_exporter_port
+      github_exporter_token        = var.github_exporter_token
+      github_exporter_docker_image = var.github_exporter_docker_image
+      github_exporter_docker_tag   = var.github_exporter_docker_tag
     })
   }
 
