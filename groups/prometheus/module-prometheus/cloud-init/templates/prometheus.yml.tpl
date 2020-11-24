@@ -28,6 +28,22 @@ write_files:
             - source_labels: [__meta_ec2_instance_id]
               target_label: instance
 
+        - job_name: node
+          scrape_interval: 15s
+          scrape_timeout: 15s
+          metrics_path: /metrics
+          scheme: http
+          ec2_sd_configs:
+            - region: eu-west-2
+              port: 9100
+          relabel_configs:
+            - source_labels: [__meta_ec2_tag_Name]
+              regex: ci-devops-web|ci-devops-worker
+              action: keep
+              # Use the instance ID as the instance label
+            - source_labels: [__meta_ec2_instance_id]
+              target_label: instance
+
         - job_name: github
           static_configs:
           - targets: ['localhost:9171']
