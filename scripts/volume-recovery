@@ -44,11 +44,11 @@ for variable in ${mandatory[@]}; do
 done
 
 # Check old volume and instance exist together
-INSTANCE_CHECK_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
+VOLUME_CHECK_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
 # Checking snapshot start time for validation
-SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids ${SNAPSHOT} | jq -r .Snapshots[].StartTime)
+SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids ${SNAPSHOT})
 # Bring back the instance name which is in the Name key tag
-INSTANCE_NAME_JSON=$(aws ec2 describe-instances --instance-id ${INSTANCE_ID} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
+INSTANCE_CHECK_JSON=$(aws ec2 describe-instances --instance-id ${INSTANCE_ID})
 
 VOLUME_INSTANCE_ID=$(echo ${INSTANCE_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
 if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
