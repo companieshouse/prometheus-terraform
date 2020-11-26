@@ -109,7 +109,8 @@ until [[ ${INSTANCE_STATE} == "stopped" ]]; do
 done
 
 # Detach the old volume from the EC2 instance and wait for an 'available' status
-DETACH=$(aws ec2 detach-volume --volume-id $OLD_VOLUME ---instance-id $INSTANCE_ID)
+echo "Detaching volume from ${INSTANCE_NAME_JSON}"
+DETACH=$(aws ec2 detach-volume --volume-id $OLD_VOLUME)
 echo "DETACH: ${DETACH}"
 DETACH_JSON=$(aws ec2 describe-volumes --volume-ids $OLD_VOLUME)
 # echo ${DETACH_JSON}
