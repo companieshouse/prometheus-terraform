@@ -40,9 +40,10 @@ write_files:
             - source_labels: [__meta_ec2_tag_Name]
               regex: ci-devops-web|ci-devops-worker
               action: keep
-              # Use the instance ID as the instance label
             - source_labels: [__meta_ec2_instance_id]
               target_label: instance
+            - source_labels: [__meta_ec2_tag_Name]
+              target_label: tagname
 
         - job_name: github
           static_configs:
