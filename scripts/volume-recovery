@@ -50,8 +50,10 @@ SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids ${SNAPSHOT})
 # Bring back the instance name which is in the Name key tag
 INSTANCE_CHECK_JSON=$(aws ec2 describe-instances --instance-id ${INSTANCE_ID})
 
-VOLUME_INSTANCE_ID=$(echo ${INSTANCE_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
+INSTANCE_NAME=$(echo ${INSTANCE_CHECK_JSON} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
 INSTANCE_REGION_JSON=$(echo ${VOLUME_CHECK_JSON} | jq -r .Volumes[].AvailabilityZone)
+SNAPSHOT_START_TIME=$(echo ${SNAPSHOT_CHECK_JSON} | jq -r .Snapshots[].StartTime)
+VOLUME_INSTANCE_ID=$(echo ${VOLUME_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
 if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
   INSTANCE_NAME=$(aws ec2 describe-instances --instance-id ${VOLUME_INSTANCE_ID} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
   echo "Volume is not attached to this instance, it appears to be attached to ${INSTANCE_NAME} (${VOLUME_INSTANCE_ID})"
