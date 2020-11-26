@@ -45,16 +45,10 @@ done
 
 # Check old volume and instance exist together
 INSTANCE_CHECK_JSON=$(aws ec2 describe-volumes --volume-ids $OLD_VOLUME)
-
-# echo ${INSTANCE_CHECK_JSON}
+# Checking snapshot start time for validation
 SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids $SNAPSHOT | jq -r .Snapshots[].StartTime)
-
-# echo "Snapshot creation date: ${SNAPSHOT_CHECK_JSON}"
-
 # Bring back the instance name which is in the Name key tag
 INSTANCE_NAME_JSON=$(aws ec2 describe-instances --instance-id $INSTANCE_ID | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
-
-# echo "Instance name is ${INSTANCE_NAME_JSON}"
 
 VOLUME_INSTANCE_ID=$(echo ${INSTANCE_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
 if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
@@ -73,22 +67,16 @@ then
     exit 1
 fi
 
-exit 1
-
 OLD_VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids $OLD_VOLUME)
 INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id $INSTANCE_ID --include-all-instances)
-# echo ${OLD_VOLUME_JSON}
-# echo ${INSTANCE_JSON}
 
 # Create volume from snapshot and wait for an 'ok' status
 echo "Creating new volume from $SNAPSHOT"
 VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id $SNAPSHOT --availability-zone eu-west-2a)
-echo "VOLUME: ${VOLUME}"
 VOLUME_ID=$(echo ${VOLUME} | jq -r .VolumeId)
-echo "VOLUME_ID: ${VOLUME_ID}"
+echo "Volume created is ${VOLUME_ID}"
 aws ec2 create-tags --resources ${VOLUME_ID} --tags Key=Snapshot,Value=daily
 VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids ${VOLUME_ID})
-# echo ${VOLUME_JSON}
 VOLUME_STATUS=$(echo ${VOLUME_JSON} | jq -r .VolumeStatuses[].VolumeStatus.Status)
 until [[ ${VOLUME_STATUS} == "ok" ]]; do
   sleep 5
@@ -101,8 +89,6 @@ echo "Success"
 # Stop the EC2 instance and wait for a 'stopped' status
 echo "Shutting down ${INSTANCE_NAME_JSON}"
 INSTANCE=$(aws ec2 stop-instances --instance-ids $INSTANCE_ID)
-echo "INSTANCE: ${INSTANCE}"
-# echo ${INSTANCE_JSON}
 INSTANCE_STATE=$(echo ${INSTANCE_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
 until [[ ${INSTANCE_STATE} == "stopped" ]]; do
   sleep 5
@@ -115,9 +101,7 @@ echo "Success"
 # Detach the old volume from the EC2 instance and wait for an 'available' status
 echo "Detaching volume from ${INSTANCE_NAME_JSON}"
 DETACH=$(aws ec2 detach-volume --volume-id $OLD_VOLUME)
-echo "DETACH: ${DETACH}"
 DETACH_JSON=$(aws ec2 describe-volumes --volume-ids $OLD_VOLUME)
-# echo ${DETACH_JSON}
 DETACH_STATE=$(echo ${DETACH_JSON} | jq -r .Volumes[].State)
 until [[ ${DETACH_STATE} == "available" ]]; do
   sleep 5
@@ -130,9 +114,7 @@ echo "Success"
 # Attach the newly created volume to the EC2 instance and wait for an 'attached' status
 echo "Attaching ${VOLUME_ID} to ${INSTANCE_NAME_JSON}"
 ATTACH=$(aws ec2 attach-volume --volume-id ${VOLUME_ID} --instance-id $INSTANCE_ID --device /dev/xvdb)
-echo "ATTACH: ${ATTACH}"
 ATTACH_JSON=$(aws ec2 describe-volumes --volume-ids ${VOLUME_ID} )
-# echo ${ATTACH_JSON}
 ATTACH_STATE=$(echo ${ATTACH_JSON} | jq -r .Volumes[].Attachments[].State)
 until [[ ${ATTACH_STATE} == "attached" ]]; do
   sleep 5
@@ -145,9 +127,7 @@ echo "Success"
 # Start up the EC2 instance and wait for a 'running' status
 echo "Starting up ${INSTANCE_NAME_JSON}"
 INSTANCE_START=$(aws ec2 start-instances --instance-ids $INSTANCE_ID)
-echo "INSTANCE_START: ${INSTANCE_START}"
 INSTANCE_START_JSON=$(aws ec2 describe-instance-status --instance-id $INSTANCE_ID --include-all-instances )
-# echo ${INSTANCE_START_JSON}
 INSTANCE_START_STATE=$(echo ${INSTANCE_START_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
 until [[ ${INSTANCE_START_STATE} == "running" ]]; do
   sleep 5
