@@ -44,11 +44,11 @@ for variable in ${mandatory[@]}; do
 done
 
 # Check old volume and instance exist together
-INSTANCE_CHECK_JSON=$(aws ec2 describe-volumes --volume-ids $OLD_VOLUME)
+INSTANCE_CHECK_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
 # Checking snapshot start time for validation
-SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids $SNAPSHOT | jq -r .Snapshots[].StartTime)
+SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids ${SNAPSHOT} | jq -r .Snapshots[].StartTime)
 # Bring back the instance name which is in the Name key tag
-INSTANCE_NAME_JSON=$(aws ec2 describe-instances --instance-id $INSTANCE_ID | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
+INSTANCE_NAME_JSON=$(aws ec2 describe-instances --instance-id ${INSTANCE_ID} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
 
 VOLUME_INSTANCE_ID=$(echo ${INSTANCE_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
 if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
@@ -56,9 +56,9 @@ if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
   exit 1
 fi
 
-echo "Snapshot is $SNAPSHOT, which was created ${SNAPSHOT_CHECK_JSON%.*}"
-echo "Instance is $INSTANCE_ID, the name is ${INSTANCE_NAME_JSON}"
-echo "Old volume is $OLD_VOLUME"
+echo "Snapshot is ${SNAPSHOT}, which was created ${SNAPSHOT_CHECK_JSON%.*}"
+echo "Instance is ${INSTANCE_ID}, the name is ${INSTANCE_NAME_JSON}"
+echo "Old volume is ${OLD_VOLUME}"
 
 read -p "Do you want to proceed? y or n " -n 1 -r
 echo
@@ -67,12 +67,12 @@ then
     exit 1
 fi
 
-OLD_VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids $OLD_VOLUME)
-INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id $INSTANCE_ID --include-all-instances)
+OLD_VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids ${OLD_VOLUME})
+INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances)
 
 # Create volume from snapshot and wait for an 'ok' status
-echo "Creating new volume from $SNAPSHOT"
-VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id $SNAPSHOT --availability-zone eu-west-2a)
+echo "Creating new volume from ${SNAPSHOT}"
+VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id ${SNAPSHOT} --availability-zone eu-west-2a)
 VOLUME_ID=$(echo ${VOLUME} | jq -r .VolumeId)
 echo "Volume created is ${VOLUME_ID}"
 aws ec2 create-tags --resources ${VOLUME_ID} --tags Key=Snapshot,Value=daily
@@ -88,11 +88,11 @@ echo "Success"
 
 # Stop the EC2 instance and wait for a 'stopped' status
 echo "Shutting down ${INSTANCE_NAME_JSON}"
-INSTANCE=$(aws ec2 stop-instances --instance-ids $INSTANCE_ID)
+INSTANCE=$(aws ec2 stop-instances --instance-ids ${INSTANCE_ID})
 INSTANCE_STATE=$(echo ${INSTANCE_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
 until [[ ${INSTANCE_STATE} == "stopped" ]]; do
   sleep 5
-  INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id $INSTANCE_ID --include-all-instances )
+  INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances )
   INSTANCE_STATE=$(echo ${INSTANCE_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
   echo ${INSTANCE_STATE}
 done
@@ -100,12 +100,12 @@ echo "Success"
 
 # Detach the old volume from the EC2 instance and wait for an 'available' status
 echo "Detaching volume from ${INSTANCE_NAME_JSON}"
-DETACH=$(aws ec2 detach-volume --volume-id $OLD_VOLUME)
-DETACH_JSON=$(aws ec2 describe-volumes --volume-ids $OLD_VOLUME)
+DETACH=$(aws ec2 detach-volume --volume-id ${OLD_VOLUME})
+DETACH_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
 DETACH_STATE=$(echo ${DETACH_JSON} | jq -r .Volumes[].State)
 until [[ ${DETACH_STATE} == "available" ]]; do
   sleep 5
-  DETACH_JSON=$(aws ec2 describe-volumes --volume-ids $OLD_VOLUME)
+  DETACH_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
   DETACH_STATE=$(echo ${DETACH_JSON} | jq -r .Volumes[].State)
   echo ${DETACH_STATE}
 done
@@ -113,7 +113,7 @@ echo "Success"
 
 # Attach the newly created volume to the EC2 instance and wait for an 'attached' status
 echo "Attaching ${VOLUME_ID} to ${INSTANCE_NAME_JSON}"
-ATTACH=$(aws ec2 attach-volume --volume-id ${VOLUME_ID} --instance-id $INSTANCE_ID --device /dev/xvdb)
+ATTACH=$(aws ec2 attach-volume --volume-id ${VOLUME_ID} --instance-id ${INSTANCE_ID} --device /dev/xvdb)
 ATTACH_JSON=$(aws ec2 describe-volumes --volume-ids ${VOLUME_ID} )
 ATTACH_STATE=$(echo ${ATTACH_JSON} | jq -r .Volumes[].Attachments[].State)
 until [[ ${ATTACH_STATE} == "attached" ]]; do
@@ -126,12 +126,12 @@ echo "Success"
 
 # Start up the EC2 instance and wait for a 'running' status
 echo "Starting up ${INSTANCE_NAME_JSON}"
-INSTANCE_START=$(aws ec2 start-instances --instance-ids $INSTANCE_ID)
-INSTANCE_START_JSON=$(aws ec2 describe-instance-status --instance-id $INSTANCE_ID --include-all-instances )
+INSTANCE_START=$(aws ec2 start-instances --instance-ids ${INSTANCE_ID})
+INSTANCE_START_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances )
 INSTANCE_START_STATE=$(echo ${INSTANCE_START_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
 until [[ ${INSTANCE_START_STATE} == "running" ]]; do
   sleep 5
-  INSTANCE_START_JSON=$(aws ec2 describe-instance-status --instance-id $INSTANCE_ID --include-all-instances )
+  INSTANCE_START_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances )
   INSTANCE_START_STATE=$(echo ${INSTANCE_START_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
   echo ${INSTANCE_START_STATE}
 done
