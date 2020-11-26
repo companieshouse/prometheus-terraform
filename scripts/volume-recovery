@@ -51,6 +51,7 @@ SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids ${SNAPSHOT})
 INSTANCE_CHECK_JSON=$(aws ec2 describe-instances --instance-id ${INSTANCE_ID})
 
 VOLUME_INSTANCE_ID=$(echo ${INSTANCE_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
+INSTANCE_REGION_JSON=$(echo ${VOLUME_CHECK_JSON} | jq -r .Volumes[].AvailabilityZone)
 if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
   INSTANCE_NAME=$(aws ec2 describe-instances --instance-id ${VOLUME_INSTANCE_ID} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
   echo "Volume is not attached to this instance, it appears to be attached to ${INSTANCE_NAME} (${VOLUME_INSTANCE_ID})"
@@ -73,7 +74,7 @@ INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --
 
 # Create volume from snapshot and wait for an 'ok' status
 echo "Creating new volume from ${SNAPSHOT}"
-VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id ${SNAPSHOT} --availability-zone eu-west-2a)
+VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id ${SNAPSHOT} --availability-zone ${INSTANCE_REGION_JSON})
 VOLUME_ID=$(echo ${VOLUME} | jq -r .VolumeId)
 echo "Volume created is ${VOLUME_ID}"
 aws ec2 create-tags --resources ${VOLUME_ID} --tags Key=Snapshot,Value=daily
