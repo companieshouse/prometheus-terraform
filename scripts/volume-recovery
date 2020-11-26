@@ -52,13 +52,14 @@ INSTANCE_NAME_JSON=$(aws ec2 describe-instances --instance-id ${INSTANCE_ID} | j
 
 VOLUME_INSTANCE_ID=$(echo ${INSTANCE_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
 if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
-  echo "Volume is not attached to this instance, it appears to be attached to ${VOLUME_INSTANCE_ID}"
+  INSTANCE_NAME=$(aws ec2 describe-instances --instance-id ${VOLUME_INSTANCE_ID} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
+  echo "Volume is not attached to this instance, it appears to be attached to ${INSTANCE_NAME} (${VOLUME_INSTANCE_ID})"
   exit 1
 fi
 
-echo "Snapshot is ${SNAPSHOT}, which was created ${SNAPSHOT_CHECK_JSON%.*}"
-echo "Instance is ${INSTANCE_ID}, the name is ${INSTANCE_NAME_JSON}"
-echo "Old volume is ${OLD_VOLUME}"
+echo "Snapshot is ${SNAPSHOT}, which was created ${SNAPSHOT_START_TIME%.*}"
+echo "Instance is ${INSTANCE_ID}, the name is ${INSTANCE_NAME}"
+echo "Old volume is ${OLD_VOLUME}, which is in ${INSTANCE_REGION_JSON}"
 
 read -p "Do you want to proceed? y or n " -n 1 -r
 echo
@@ -87,7 +88,7 @@ done
 echo "Success"
 
 # Stop the EC2 instance and wait for a 'stopped' status
-echo "Shutting down ${INSTANCE_NAME_JSON}"
+echo "Shutting down ${INSTANCE_NAME}"
 INSTANCE=$(aws ec2 stop-instances --instance-ids ${INSTANCE_ID})
 INSTANCE_STATE=$(echo ${INSTANCE_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
 until [[ ${INSTANCE_STATE} == "stopped" ]]; do
@@ -99,7 +100,7 @@ done
 echo "Success"
 
 # Detach the old volume from the EC2 instance and wait for an 'available' status
-echo "Detaching volume from ${INSTANCE_NAME_JSON}"
+echo "Detaching volume from ${INSTANCE_NAME}"
 DETACH=$(aws ec2 detach-volume --volume-id ${OLD_VOLUME})
 DETACH_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
 DETACH_STATE=$(echo ${DETACH_JSON} | jq -r .Volumes[].State)
@@ -112,7 +113,7 @@ done
 echo "Success"
 
 # Attach the newly created volume to the EC2 instance and wait for an 'attached' status
-echo "Attaching ${VOLUME_ID} to ${INSTANCE_NAME_JSON}"
+echo "Attaching ${VOLUME_ID} to ${INSTANCE_NAME}"
 ATTACH=$(aws ec2 attach-volume --volume-id ${VOLUME_ID} --instance-id ${INSTANCE_ID} --device /dev/xvdb)
 ATTACH_JSON=$(aws ec2 describe-volumes --volume-ids ${VOLUME_ID} )
 ATTACH_STATE=$(echo ${ATTACH_JSON} | jq -r .Volumes[].Attachments[].State)
@@ -125,7 +126,7 @@ done
 echo "Success"
 
 # Start up the EC2 instance and wait for a 'running' status
-echo "Starting up ${INSTANCE_NAME_JSON}"
+echo "Starting up ${INSTANCE_NAME}"
 INSTANCE_START=$(aws ec2 start-instances --instance-ids ${INSTANCE_ID})
 INSTANCE_START_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances )
 INSTANCE_START_STATE=$(echo ${INSTANCE_START_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
@@ -135,4 +136,4 @@ until [[ ${INSTANCE_START_STATE} == "running" ]]; do
   INSTANCE_START_STATE=$(echo ${INSTANCE_START_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
   echo ${INSTANCE_START_STATE}
 done
-echo "Script has successfully finished, previous volume has been recovered successfully"
+echo "Script has successfully finished, previous volume has been recovered successfully, please remember to delete ${OLD_VOLUME}"
