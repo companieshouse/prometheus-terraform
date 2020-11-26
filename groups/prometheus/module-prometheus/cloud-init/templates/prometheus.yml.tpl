@@ -18,7 +18,7 @@ write_files:
           metrics_path: /metrics
           scheme: http
           ec2_sd_configs:
-            - region: eu-west-2
+            - region: ${region}
               port: ${prometheus_metrics_port}
           relabel_configs:
             - source_labels: [__meta_ec2_tag_Name]
@@ -34,7 +34,7 @@ write_files:
           metrics_path: /metrics
           scheme: http
           ec2_sd_configs:
-            - region: eu-west-2
+            - region: ${region}
               port: 9100
           relabel_configs:
             - source_labels: [__meta_ec2_tag_Name]
