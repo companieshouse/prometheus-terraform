@@ -16,6 +16,7 @@ variable "environment" {
 
 variable "instance_count" {
   type = string
+  default = 1
   description = "The number of EC2 instances to be provisoned"
 }
 
