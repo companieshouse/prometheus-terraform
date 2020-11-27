@@ -1,3 +1,2 @@
 # EC2 Instances
-instance_count = 1
-tag_environment = "sandbox"
+environment = "sandbox"
