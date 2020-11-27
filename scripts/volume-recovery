@@ -79,7 +79,7 @@ echo "Creating new volume from ${SNAPSHOT}"
 VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id ${SNAPSHOT} --availability-zone ${INSTANCE_REGION_JSON})
 VOLUME_ID=$(echo ${VOLUME} | jq -r .VolumeId)
 echo "Volume created is ${VOLUME_ID}"
-aws ec2 create-tags --resources ${VOLUME_ID} --tags Key=Snapshot,Value=daily
+aws ec2 create-tags --resources ${VOLUME_ID} --tags Key=Snapshot,Value=daily Key=Name,Value=devops-prometheus-instance1
 VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids ${VOLUME_ID})
 VOLUME_STATUS=$(echo ${VOLUME_JSON} | jq -r .VolumeStatuses[].VolumeStatus.Status)
 until [[ ${VOLUME_STATUS} == "ok" ]]; do
