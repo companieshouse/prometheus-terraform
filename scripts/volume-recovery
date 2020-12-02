@@ -139,4 +139,9 @@ until [[ ${INSTANCE_START_STATE} == "running" ]]; do
   INSTANCE_START_STATE=$(echo ${INSTANCE_START_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
   echo ${INSTANCE_START_STATE}
 done
+
+echo "Removing 'Daily' snapshot tag from ${OLD_VOLUME}"
+aws ec2 delete-tags --resources ${OLD_VOLUME} --tags Key=Snapshot,Value=daily
+echo "Success"
+
 echo "Script has successfully finished, previous volume has been recovered successfully, please remember to delete ${OLD_VOLUME}"
