@@ -51,7 +51,7 @@ SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids ${SNAPSHOT})
 INSTANCE_CHECK_JSON=$(aws ec2 describe-instances --instance-id ${INSTANCE_ID})
 
 INSTANCE_NAME=$(echo ${INSTANCE_CHECK_JSON} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
-INSTANCE_REGION_JSON=$(echo ${VOLUME_CHECK_JSON} | jq -r .Volumes[].AvailabilityZone)
+INSTANCE_REGION=$(echo ${VOLUME_CHECK_JSON} | jq -r .Volumes[].AvailabilityZone)
 SNAPSHOT_START_TIME=$(echo ${SNAPSHOT_CHECK_JSON} | jq -r .Snapshots[].StartTime)
 VOLUME_INSTANCE_ID=$(echo ${VOLUME_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
 if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
@@ -62,7 +62,7 @@ fi
 
 echo "Snapshot is ${SNAPSHOT}, which was created ${SNAPSHOT_START_TIME%.*}"
 echo "Instance is ${INSTANCE_ID}, the name is ${INSTANCE_NAME}"
-echo "Old volume is ${OLD_VOLUME}, which is in ${INSTANCE_REGION_JSON}"
+echo "Old volume is ${OLD_VOLUME}, which is in ${INSTANCE_REGION}"
 
 read -p "Do you want to proceed? y or n " -n 1 -r
 echo
@@ -76,10 +76,10 @@ INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --
 
 # Create volume from snapshot and wait for an 'ok' status
 echo "Creating new volume from ${SNAPSHOT}"
-VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id ${SNAPSHOT} --availability-zone ${INSTANCE_REGION_JSON})
+VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id ${SNAPSHOT} --availability-zone ${INSTANCE_REGION})
 VOLUME_ID=$(echo ${VOLUME} | jq -r .VolumeId)
 echo "Volume created is ${VOLUME_ID}"
-aws ec2 create-tags --resources ${VOLUME_ID} --tags Key=Snapshot,Value=daily Key=Name,Value=devops-prometheus-instance1
+aws ec2 create-tags --resources ${VOLUME_ID} --tags Key=Snapshot,Value=daily Key=Name,Value=${INSTANCE_NAME}
 VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids ${VOLUME_ID})
 VOLUME_STATUS=$(echo ${VOLUME_JSON} | jq -r .VolumeStatuses[].VolumeStatus.Status)
 until [[ ${VOLUME_STATUS} == "ok" ]]; do
@@ -92,7 +92,7 @@ echo "Success"
 
 # Stop the EC2 instance and wait for a 'stopped' status
 echo "Shutting down ${INSTANCE_NAME}"
-INSTANCE=$(aws ec2 stop-instances --instance-ids ${INSTANCE_ID})
+INSTANCE_STOP=$(aws ec2 stop-instances --instance-ids ${INSTANCE_ID})
 INSTANCE_STATE=$(echo ${INSTANCE_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
 until [[ ${INSTANCE_STATE} == "stopped" ]]; do
   sleep 5
