@@ -1,0 +1,147 @@
+#!/bin/bash
+
+set -e
+
+if [[ $# -ne 6 ]]; then
+  echo "Script needs 6 parameters, -s (snapshot id) -i (instance id) -v (volume id)"
+  exit 1
+fi
+
+while [[ $# -gt 0 ]]; do
+    key="${1}"
+    case ${key} in
+        -s|--snapshot)
+            SNAPSHOT="${2}"
+            shift
+            ;;
+        -i|--instance)
+            INSTANCE_ID="${2}"
+            shift
+            ;;
+        -v|--volume)
+            OLD_VOLUME="${2}"
+            shift
+            ;;
+        *)
+            log-output error "Unexpected option: ${1}"
+            usage
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+mandatory=(
+  SNAPSHOT
+  INSTANCE_ID
+  OLD_VOLUME
+)
+for variable in ${mandatory[@]}; do
+  if [[ -z ${variable} ]]; then
+    echo "Mandatory variable missing: [${BOLD}${variable}${NORMAL}]"
+    exit 1
+  fi
+done
+
+# Check old volume and instance exist together
+VOLUME_CHECK_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
+# Checking snapshot start time for validation
+SNAPSHOT_CHECK_JSON=$(aws ec2 describe-snapshots --snapshot-ids ${SNAPSHOT})
+# Bring back the instance name which is in the Name key tag
+INSTANCE_CHECK_JSON=$(aws ec2 describe-instances --instance-id ${INSTANCE_ID})
+
+INSTANCE_NAME=$(echo ${INSTANCE_CHECK_JSON} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
+INSTANCE_REGION=$(echo ${VOLUME_CHECK_JSON} | jq -r .Volumes[].AvailabilityZone)
+SNAPSHOT_START_TIME=$(echo ${SNAPSHOT_CHECK_JSON} | jq -r .Snapshots[].StartTime)
+VOLUME_INSTANCE_ID=$(echo ${VOLUME_CHECK_JSON} | jq -r .Volumes[].Attachments[].InstanceId)
+if [[ ${VOLUME_INSTANCE_ID} != ${INSTANCE_ID} ]]; then
+  INSTANCE_NAME=$(aws ec2 describe-instances --instance-id ${VOLUME_INSTANCE_ID} | jq -r '.Reservations[].Instances[].Tags[] | select(.Key == "Name").Value')
+  echo "Volume is not attached to this instance, it appears to be attached to ${INSTANCE_NAME} (${VOLUME_INSTANCE_ID})"
+  exit 1
+fi
+
+echo "Snapshot is ${SNAPSHOT}, which was created ${SNAPSHOT_START_TIME%.*}"
+echo "Instance is ${INSTANCE_ID}, the name is ${INSTANCE_NAME}"
+echo "Old volume is ${OLD_VOLUME}, which is in ${INSTANCE_REGION}"
+
+read -p "Do you want to proceed? y or n " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+    exit 1
+fi
+
+OLD_VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids ${OLD_VOLUME})
+INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances)
+
+# Create volume from snapshot and wait for an 'ok' status
+echo "Creating new volume from ${SNAPSHOT}"
+VOLUME=$(aws ec2 create-volume --volume-type gp2 --snapshot-id ${SNAPSHOT} --availability-zone ${INSTANCE_REGION})
+VOLUME_ID=$(echo ${VOLUME} | jq -r .VolumeId)
+echo "Volume created is ${VOLUME_ID}"
+aws ec2 create-tags --resources ${VOLUME_ID} --tags Key=Snapshot,Value=daily Key=Name,Value=${INSTANCE_NAME}
+VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids ${VOLUME_ID})
+VOLUME_STATUS=$(echo ${VOLUME_JSON} | jq -r .VolumeStatuses[].VolumeStatus.Status)
+until [[ ${VOLUME_STATUS} == "ok" ]]; do
+  sleep 5
+  VOLUME_JSON=$(aws ec2 describe-volume-status --volume-ids ${VOLUME_ID})
+  VOLUME_STATUS=$(echo ${VOLUME_JSON} | jq -r .VolumeStatuses[].VolumeStatus.Status)
+  echo ${VOLUME_STATUS}
+done
+echo "Success"
+
+# Stop the EC2 instance and wait for a 'stopped' status
+echo "Shutting down ${INSTANCE_NAME}"
+INSTANCE_STOP=$(aws ec2 stop-instances --instance-ids ${INSTANCE_ID})
+INSTANCE_STATE=$(echo ${INSTANCE_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
+until [[ ${INSTANCE_STATE} == "stopped" ]]; do
+  sleep 5
+  INSTANCE_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances )
+  INSTANCE_STATE=$(echo ${INSTANCE_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
+  echo ${INSTANCE_STATE}
+done
+echo "Success"
+
+# Detach the old volume from the EC2 instance and wait for an 'available' status
+echo "Detaching volume from ${INSTANCE_NAME}"
+DETACH=$(aws ec2 detach-volume --volume-id ${OLD_VOLUME})
+DETACH_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
+DETACH_STATE=$(echo ${DETACH_JSON} | jq -r .Volumes[].State)
+until [[ ${DETACH_STATE} == "available" ]]; do
+  sleep 5
+  DETACH_JSON=$(aws ec2 describe-volumes --volume-ids ${OLD_VOLUME})
+  DETACH_STATE=$(echo ${DETACH_JSON} | jq -r .Volumes[].State)
+  echo ${DETACH_STATE}
+done
+echo "Success"
+
+# Attach the newly created volume to the EC2 instance and wait for an 'attached' status
+echo "Attaching ${VOLUME_ID} to ${INSTANCE_NAME}"
+ATTACH=$(aws ec2 attach-volume --volume-id ${VOLUME_ID} --instance-id ${INSTANCE_ID} --device /dev/xvdb)
+ATTACH_JSON=$(aws ec2 describe-volumes --volume-ids ${VOLUME_ID} )
+ATTACH_STATE=$(echo ${ATTACH_JSON} | jq -r .Volumes[].Attachments[].State)
+until [[ ${ATTACH_STATE} == "attached" ]]; do
+  sleep 5
+  ATTACH_JSON=$(aws ec2 describe-volumes --volume-ids ${VOLUME_ID} )
+  ATTACH_STATE=$(echo ${ATTACH_JSON} | jq -r .Volumes[].Attachments[].State)
+  echo ${ATTACH_STATE}
+done
+echo "Success"
+
+# Start up the EC2 instance and wait for a 'running' status
+echo "Starting up ${INSTANCE_NAME}"
+INSTANCE_START=$(aws ec2 start-instances --instance-ids ${INSTANCE_ID})
+INSTANCE_START_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances )
+INSTANCE_START_STATE=$(echo ${INSTANCE_START_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
+until [[ ${INSTANCE_START_STATE} == "running" ]]; do
+  sleep 5
+  INSTANCE_START_JSON=$(aws ec2 describe-instance-status --instance-id ${INSTANCE_ID} --include-all-instances )
+  INSTANCE_START_STATE=$(echo ${INSTANCE_START_JSON} | jq -r .InstanceStatuses[].InstanceState.Name)
+  echo ${INSTANCE_START_STATE}
+done
+
+echo "Removing 'Daily' snapshot tag from ${OLD_VOLUME}"
+aws ec2 delete-tags --resources ${OLD_VOLUME} --tags Key=Snapshot,Value=daily
+echo "Success"
+
+echo "Script has successfully finished, previous volume has been recovered successfully, please remember to delete ${OLD_VOLUME}"
