@@ -35,14 +35,6 @@ resource "aws_security_group" "prometheus_server" {
     description = "Prometheus API"
   }
 
-  ingress {
-    from_port   = 9171
-    to_port     = 9171
-    protocol    = "tcp"
-    cidr_blocks = var.prometheus_cidrs
-    description = "Github Exporter"
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
