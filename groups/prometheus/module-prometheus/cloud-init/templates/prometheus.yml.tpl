@@ -1,4 +1,16 @@
 write_files:
+
+  - path: /etc/prometheus/github_rules.yml
+    owner: prometheus:prometheus
+    permissions: 0644
+    content: |
+      groups:
+        - name: github_rules
+          interval: 1m
+          rules:
+            - record: github_rate_used
+              expr: github_rate_limit - github_rate_remaining
+
   - path: /etc/prometheus/prometheus.yml
     owner: prometheus:prometheus
     permissions: 0644
@@ -6,6 +18,9 @@ write_files:
       global:
         scrape_interval:     30s
         evaluation_interval: 30s
+
+      rule_files:
+        - /etc/prometheus/github_rules.yml
 
       scrape_configs:
         - job_name: 'prometheus'
