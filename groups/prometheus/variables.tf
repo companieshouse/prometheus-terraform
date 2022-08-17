@@ -26,11 +26,6 @@ variable "instance_type" {
   description = "The type of EC2 instance to be provisoned"
 }
 
-variable "private_key_path" {
-  type = string
-  description = "The private key path to be used"
-}
-
 variable "github_exporter_docker_image" {
   type = string
   default = "infinityworks/github-exporter"
@@ -91,12 +86,19 @@ variable "vault_password" {
   description = "Password for connecting to Vault - usually supplied through TF_VARS"
 }
 
-variable "dns_zone_id" {
-  type  = string
-  description = "The ID of the zone to be used"
-}
-
 variable "dns_zone_name" {
   type = string
   description = "The zone name to be used"
+}
+
+variable "vpc_name" {
+  type        = string
+  description = "The name of the VPC to deploy in to"
+  default     = "management-vpc"
+}
+
+variable "subnet_pattern" {
+  type        = string
+  description = "Pattern to use when looking up subnet data"
+  default     = "dev-management-private-*"
 }

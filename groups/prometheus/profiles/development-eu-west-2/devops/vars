@@ -1,2 +1,6 @@
-# EC2 Instances
-environment = "devops"
+aws_profile   = "development-eu-west-2"
+environment   = "devops"
+region        = "eu-west-2"
+
+dns_zone_name = "aws.chdev.org"
+vpc_name      = "Management"
