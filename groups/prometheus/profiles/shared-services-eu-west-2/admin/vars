@@ -1,5 +1,5 @@
 aws_profile    = "shared-services-eu-west-2"
-environment    = "devops"
+environment    = "admin"
 region         = "eu-west-2"
 
 dns_zone_name       = "sharedservices.aws.internal"
