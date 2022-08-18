@@ -44,7 +44,7 @@ resource "aws_backup_selection" "selection" {
   }
 
   condition {
-    string_like {
+    string_equals {
       key   = "aws:ResourceTag/Service"
       value = var.service
     }
