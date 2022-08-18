@@ -114,3 +114,33 @@ variable "acm_pca_certificate_arn" {
   description = "The ARN of the Private Certificate Authority certificate used when creating an ACM certificate based on a Private DNS zone hostname"
   default     = ""
 }
+
+variable "backup_enable" {
+  type        = bool
+  description = "Controls whether the AWS Backup service should be configured for the deployment (true) or not (false)"
+  default     = false
+}
+
+variable "backup_start_window_mins" {
+  type        = number
+  description = "The amount of time, in minutes, that AWS Backup has to start the backup process"
+  default     = 60
+}
+
+variable "backup_completion_window_mins" {
+  type        = number
+  description = "The amount of time, in minutes, that AWS Backup has to complete the backup process"
+  default     = 180
+}
+
+variable "backup_delete_after_days" {
+  type        = number
+  description = "The number of days after which backups will be deleted"
+  default     = 14
+}
+
+variable "backup_cron_schedule" {
+  type        = string
+  description = "The AWS cron schedule expression used to define when the configured backup plan should be executed"
+  default     = "cron(0 3 * * ? *)"
+}

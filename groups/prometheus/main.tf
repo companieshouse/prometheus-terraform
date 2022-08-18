@@ -32,3 +32,15 @@ module "prometheus" {
   dns_zone_name                = var.dns_zone_name
   dns_zone_is_private          = var.dns_zone_is_private
 }
+
+module "awsbackup" {
+  source                        = "./module-awsbackup"
+
+  environment                   = var.environment
+  service                       = var.service
+  backup_enable                 = var.backup_enable
+  backup_start_window_mins      = var.backup_start_window_mins
+  backup_completion_window_mins = var.backup_completion_window_mins
+  backup_delete_after_days      = var.backup_delete_after_days
+  backup_cron_schedule          = var.backup_cron_schedule
+}
