@@ -1,5 +1,6 @@
 locals {
 
+  acm_pca_certificate_arn   = var.dns_zone_is_private ? data.vault_generic_secret.secrets.data["acm_pca_certificate_arn"] : ""
   internal_cidrs            = values(data.vault_generic_secret.internal_cidrs.data)
   vpc_id                    = data.aws_vpc.vpc.id
 

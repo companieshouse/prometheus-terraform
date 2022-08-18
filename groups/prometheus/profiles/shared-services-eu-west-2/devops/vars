@@ -1,0 +1,9 @@
+aws_profile    = "shared-services-eu-west-2"
+environment    = "devops"
+region         = "eu-west-2"
+
+dns_zone_name       = "sharedservices.aws.internal"
+dns_zone_is_private = true
+vpc_name            = "vpc-shared-services"
+subnet_pattern      = "sub-build-*"
+ssh_keyname         = "platform-infrastructure"

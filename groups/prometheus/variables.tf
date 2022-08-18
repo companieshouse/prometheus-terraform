@@ -91,6 +91,12 @@ variable "dns_zone_name" {
   description = "The zone name to be used"
 }
 
+variable "dns_zone_is_private" {
+  type        = bool
+  description = "Defines whether the Route53 DNS zone is a private zone (true) or a public zone (false)"
+  default     = false
+}
+
 variable "vpc_name" {
   type        = string
   description = "The name of the VPC to deploy in to"
@@ -101,4 +107,10 @@ variable "subnet_pattern" {
   type        = string
   description = "Pattern to use when looking up subnet data"
   default     = "dev-management-private-*"
+}
+
+variable "acm_pca_certificate_arn" {
+  type        = string
+  description = "The ARN of the Private Certificate Authority certificate used when creating an ACM certificate based on a Private DNS zone hostname"
+  default     = ""
 }

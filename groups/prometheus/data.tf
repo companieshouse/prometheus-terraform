@@ -30,5 +30,6 @@ data "aws_subnet" "subnet_data" {
 }
 
 data "aws_route53_zone" "dns_zone" {
-  name = var.dns_zone_name
+  name         = var.dns_zone_name
+  private_zone = var.dns_zone_is_private
 }

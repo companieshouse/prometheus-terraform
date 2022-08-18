@@ -10,6 +10,7 @@ module "prometheus" {
   source                       = "./module-prometheus"
 
   ami_version_pattern          = var.ami_version_pattern
+  acm_pca_certificate_arn      = local.acm_pca_certificate_arn
   application_subnets          = local.mgmt_private_subnet_ids
   environment                  = var.environment
   instance_count               = var.instance_count
@@ -29,4 +30,5 @@ module "prometheus" {
   web_cidrs                    = local.internal_cidrs
   dns_zone_id                  = data.aws_route53_zone.dns_zone.zone_id
   dns_zone_name                = var.dns_zone_name
+  dns_zone_is_private          = var.dns_zone_is_private
 }

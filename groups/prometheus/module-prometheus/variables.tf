@@ -97,3 +97,13 @@ variable "dns_zone_name" {
   type = string
   description = "The zone name to be used"
 }
+
+variable "dns_zone_is_private" {
+  type        = bool
+  description = "Defines whether the Route53 DNS zone is a private zone (true) or a public zone (false)"
+}
+
+variable "acm_pca_certificate_arn" {
+  type        = string
+  description = "The ARN of the Private Certificate Authority certificate used when creating an ACM certificate based on a Private DNS zone hostname"
+}
