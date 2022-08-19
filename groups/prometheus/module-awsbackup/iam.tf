@@ -40,8 +40,26 @@ data "aws_iam_policy_document" "backup_service_pass_role_doc" {
     actions   = ["iam:PassRole"]
     effect    = "Allow"
     resources = [
-       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ec2:*"
+       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
     ]
+  }
+}
+
+##
+## Additional permissions
+##
+data "aws_iam_policy_document" "backup_service_permissions_role_doc" {
+  count = var.backup_enable ? 1 : 0
+  statement {
+    sid       = "AWSBackupPermissions"
+    actions   = [
+      "ec2:CreateTags",
+      "ec2:DescribeTags",
+      "rds:AddTagsToResource",
+      "rds:ListTagsForResource"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
   }
 }
 
@@ -80,5 +98,11 @@ resource "aws_iam_role_policy" "backup_service_restore_policy" {
 resource "aws_iam_role_policy" "backup_service_pass_role_policy" {
   count  = var.backup_enable ? 1 : 0
   policy = data.aws_iam_policy_document.backup_service_pass_role_doc[0].json
+  role   = aws_iam_role.backup_service_role[0].name
+}
+
+resource "aws_iam_role_policy" "backup_service_permissions_policy" {
+  count  = var.backup_enable ? 1 : 0
+  policy = data.aws_iam_policy_document.backup_service_permissions_role_doc[0].json
   role   = aws_iam_role.backup_service_role[0].name
 }
