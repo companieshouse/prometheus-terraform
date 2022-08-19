@@ -39,10 +39,7 @@ data "aws_iam_policy_document" "backup_service_pass_role_doc" {
     sid       = "AWSBackupPassRole"
     actions   = ["iam:PassRole"]
     effect    = "Allow"
-    resources = var.backup_instance_profile_list
-#    resources = [
-#       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
-#    ]
+    resources = var.backup_instance_role_arn_list
   }
 }
 
@@ -60,7 +57,7 @@ data "aws_iam_policy_document" "backup_service_permissions_role_doc" {
       "rds:ListTagsForResource"
     ]
     effect    = "Allow"
-    resources = ["*"]
+    resources = var.backup_instance_arn_list
   }
 }
 
