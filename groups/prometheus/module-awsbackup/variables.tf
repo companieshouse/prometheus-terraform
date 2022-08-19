@@ -32,3 +32,8 @@ variable "backup_cron_schedule" {
   type        = string
   description = "The AWS cron schedule expression used to define when the configured backup plan should be executed"
 }
+
+variable "backup_instance_profile_list" {
+  type        = list(string)
+  description = "A list of instance profile ARNs that AWS Backup will be granted access to"
+}

@@ -43,4 +43,5 @@ module "awsbackup" {
   backup_completion_window_mins = var.backup_completion_window_mins
   backup_delete_after_days      = var.backup_delete_after_days
   backup_cron_schedule          = var.backup_cron_schedule
+  backup_instance_profile_list  = [module.prometheus.instance_role_arn]
 }

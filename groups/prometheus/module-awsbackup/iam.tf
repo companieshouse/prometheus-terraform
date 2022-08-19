@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "backup_service_assume_role_doc" {
 }
 
 ##
-## PassRole permissions needed to be able to restore EC2 instance profiles
+## PassRole permissions needed to be able to restore instance profiles
 ##
 data "aws_iam_policy_document" "backup_service_pass_role_doc" {
   count = var.backup_enable ? 1 : 0
@@ -39,9 +39,10 @@ data "aws_iam_policy_document" "backup_service_pass_role_doc" {
     sid       = "AWSBackupPassRole"
     actions   = ["iam:PassRole"]
     effect    = "Allow"
-    resources = [
-       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
-    ]
+    resources = var.backup_instance_profile_list
+#    resources = [
+#       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
+#    ]
   }
 }
 
