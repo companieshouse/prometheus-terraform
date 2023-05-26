@@ -53,11 +53,6 @@ variable "tag_name_regex" {
   description = "The tag name regex uses to discover EC2 instances"
 }
 
-variable "private_key_path" {
-  type = string
-  description = "The private key path to be used"
-}
-
 variable "prometheus_cidrs" {
   type = list(string)
   description = "The Prometheus CIDR to be used"

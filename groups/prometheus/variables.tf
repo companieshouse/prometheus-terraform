@@ -26,11 +26,6 @@ variable "instance_type" {
   description = "The type of EC2 instance to be provisoned"
 }
 
-variable "private_key_path" {
-  type = string
-  description = "The private key path to be used"
-}
-
 variable "github_exporter_docker_image" {
   type = string
   default = "infinityworks/github-exporter"
@@ -80,23 +75,4 @@ variable "service" {
   type = string
   default = "prometheus"
   description = "The service name to be used when creating AWS resources"
-}
-
-variable "vault_username" {
-  type        = string
-  description = "Username for connecting to Vault - usually supplied through TF_VARS"
-}
-variable "vault_password" {
-  type        = string
-  description = "Password for connecting to Vault - usually supplied through TF_VARS"
-}
-
-variable "dns_zone_id" {
-  type  = string
-  description = "The ID of the zone to be used"
-}
-
-variable "dns_zone_name" {
-  type = string
-  description = "The zone name to be used"
 }

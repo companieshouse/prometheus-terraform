@@ -1,3 +1,5 @@
-# EC2 Instances
-environment = "platform"
+aws_profile   = "development-eu-west-1"
+environment   = "platform"
+region        = "eu-west-1"
+
 instance_type = "t3.medium"
