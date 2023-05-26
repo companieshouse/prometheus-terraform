@@ -14,6 +14,8 @@ locals {
   mgmt_private_subnet_cidrs = [ for name, data in local.subnets_map: data.subnet_cidr ]
 
   secrets                   = data.vault_generic_secret.secrets.data
+  ami_owner                 = local.secrets.ami_owner
+  dns_zone_private_zone     = local.secrets.dns_zone_private_zone
   dns_zone_name             = local.secrets.dns_zone_name
   github_exporter_token     = local.secrets.github_exporter_token
   placement_subnet_pattern  = local.secrets.placement_subnet_pattern

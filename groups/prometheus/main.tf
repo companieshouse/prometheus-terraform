@@ -9,6 +9,7 @@ terraform {
 module "prometheus" {
   source                       = "./module-prometheus"
 
+  ami_owner                    = local.ami_owner
   ami_version_pattern          = var.ami_version_pattern
   application_subnets          = local.mgmt_private_subnet_ids
   environment                  = var.environment
@@ -29,4 +30,5 @@ module "prometheus" {
   web_cidrs                    = local.internal_cidrs
   dns_zone_id                  = data.aws_route53_zone.dns_zone.zone_id
   dns_zone_name                = local.dns_zone_name
+  ssl_certificate_name         = var.ssl_certificate_name
 }

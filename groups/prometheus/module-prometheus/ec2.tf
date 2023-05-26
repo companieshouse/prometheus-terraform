@@ -1,5 +1,5 @@
 data "aws_ami" "prometheus" {
-  owners      = ["self"]
+  owners      = [var.ami_owner]
   name_regex  = "^prometheus-ami-\\d.\\d.\\d"
   most_recent = true
   filter {
