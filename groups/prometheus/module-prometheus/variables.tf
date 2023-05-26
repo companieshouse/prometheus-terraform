@@ -1,3 +1,8 @@
+variable "ami_owner" {
+  type        = string
+  description = "The owner string to use when looking up the AMI"
+}
+
 variable "ami_version_pattern" {
   type = string
   description = "The AMI version pattern to be used"
@@ -6,6 +11,16 @@ variable "ami_version_pattern" {
 variable "application_subnets" {
   type = list(string)
   description = "The application subnets to be used"
+}
+
+variable "dns_zone_id" {
+  type = string
+  description = "The zone ID to be used"
+}
+
+variable "dns_zone_name" {
+  type = string
+  description = "The zone name to be used"
 }
 
 variable "environment" {
@@ -78,6 +93,11 @@ variable "ssh_keyname" {
   description = "The ssh key to be used"
 }
 
+variable "ssl_certificate_name" {
+  type        = string
+  description = "The name of an existing ACM certificate to use for the ELB SSL listener. Setting this disables certificate creation"
+}
+
 variable "vpc_id" {
   type = string
   description = "The ID of the VPC to be used"
@@ -86,14 +106,4 @@ variable "vpc_id" {
 variable "web_cidrs" {
   type = list(string)
   description = "The CIDRs to grant web access to"
-}
-
-variable "dns_zone_id" {
-  type = string
-  description = "The zone ID to be used"
-}
-
-variable "dns_zone_name" {
-  type = string
-  description = "The zone name to be used"
 }
