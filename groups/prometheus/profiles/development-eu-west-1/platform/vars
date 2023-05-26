@@ -3,3 +3,4 @@ environment   = "platform"
 region        = "eu-west-1"
 
 dns_zone_name = "aws.chdev.org"
+instance_type = "t3.medium"
