@@ -8,7 +8,7 @@ data "vault_generic_secret" "internal_cidrs" {
 
 data "aws_vpc" "vpc" {
   tags = {
-    Name = var.vpc_name
+    Name = local.placement_vpc_pattern
   }
 }
 
@@ -20,7 +20,7 @@ data "aws_subnets" "subnets" {
 
   filter {
     name   = "tag:Name"
-    values = [var.subnet_pattern]
+    values = [local.placement_subnet_pattern]
   }
 }
 
@@ -30,5 +30,5 @@ data "aws_subnet" "subnet_data" {
 }
 
 data "aws_route53_zone" "dns_zone" {
-  name = var.dns_zone_name
+  name = local.dns_zone_name
 }

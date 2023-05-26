@@ -76,29 +76,3 @@ variable "service" {
   default = "prometheus"
   description = "The service name to be used when creating AWS resources"
 }
-
-variable "vault_username" {
-  type        = string
-  description = "Username for connecting to Vault - usually supplied through TF_VARS"
-}
-variable "vault_password" {
-  type        = string
-  description = "Password for connecting to Vault - usually supplied through TF_VARS"
-}
-
-variable "dns_zone_name" {
-  type = string
-  description = "The zone name to be used"
-}
-
-variable "vpc_name" {
-  type        = string
-  description = "The name of the VPC to deploy in to"
-  default     = "management-vpc"
-}
-
-variable "subnet_pattern" {
-  type        = string
-  description = "Pattern to use when looking up subnet data"
-  default     = "dev-management-private-*"
-}

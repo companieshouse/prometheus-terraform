@@ -16,7 +16,7 @@ module "prometheus" {
   instance_type                = var.instance_type
   prometheus_cidrs             = concat(local.mgmt_private_subnet_cidrs)
   github_exporter_port         = var.github_exporter_port
-  github_exporter_token        = data.vault_generic_secret.secrets.data["github_exporter_token"]
+  github_exporter_token        = local.github_exporter_token
   github_exporter_docker_image = var.github_exporter_docker_image
   github_exporter_docker_tag   = var.github_exporter_docker_tag
   prometheus_metrics_port      = var.prometheus_metrics_port
@@ -28,5 +28,5 @@ module "prometheus" {
   vpc_id                       = data.aws_vpc.vpc.id
   web_cidrs                    = local.internal_cidrs
   dns_zone_id                  = data.aws_route53_zone.dns_zone.zone_id
-  dns_zone_name                = var.dns_zone_name
+  dns_zone_name                = local.dns_zone_name
 }
