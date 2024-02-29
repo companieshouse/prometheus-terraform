@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "parameter_store_read_policy" {
     effect  = "Allow"
 
     resources = [
-        "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${var.service}/${var.environment}/*"
+        "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter${local.parameter_store_path}"
     ]
   }
 
