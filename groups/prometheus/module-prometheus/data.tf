@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 data "aws_acm_certificate" "certificate" {
   count = local.create_ssl_certificate ? 0 : 1
 
