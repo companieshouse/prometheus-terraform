@@ -1,10 +1,10 @@
 data "aws_ami" "prometheus" {
   owners      = [var.ami_owner]
-  name_regex  = "^prometheus-ami-\\d.\\d.\\d"
+  name_regex  = "^prometheus-\\d.\\d.\\d"
   most_recent = true
   filter {
     name   = "name"
-    values = ["prometheus-ami-${var.ami_version_pattern}"]
+    values = ["prometheus-${var.ami_version_pattern}"]
   }
 }
 
