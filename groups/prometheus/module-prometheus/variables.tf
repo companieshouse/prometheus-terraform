@@ -38,6 +38,18 @@ variable "instance_type" {
   description = "The type of EC2 instance to be provisoned"
 }
 
+variable "root_volume_size_gb" {
+  type        = number
+  default     = 20
+  description = "The EC2 instance root volume size in Gibibytes (GiB)"
+}
+
+variable "data_volume_size_gb" {
+  type        = number
+  default     = 20
+  description = "The EC2 instance data volume size in Gibibytes (GiB)"
+}
+
 variable "github_exporter_docker_image" {
   type = string
   description = "The name of the exporter container image."
