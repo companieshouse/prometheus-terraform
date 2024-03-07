@@ -4,7 +4,7 @@ This project is comprised of a terraform script which when run will create the n
 
 ## Prerequisites
 
-* [Terraform](https://www.terraform.io/); tested with version v0.12.09,
+* [Terraform](https://www.terraform.io/); tested with version v0.12.31,
 * [AWS Command Line Interface](https://aws.amazon.com/cli/) 1.16.155+
 
 ### AWS Credentials
@@ -25,7 +25,6 @@ Variable    | Description | Examples
 aws_region  | AWS region to create the infrastructure  | eu-west-2
 environment  | AWS environment in which to create the infrastructure  | development
 instance_count | How many instances you want | 1
-private_key_path | The path of your private ssh key | "~/.mysshkey"
 prometheus_metrics_port | The desired port | 9999
 ssh_keyname | The keyname of the ssh profile you want to use | my-environment
 tag_name_regex | Prometheus tag | my-instance-tag

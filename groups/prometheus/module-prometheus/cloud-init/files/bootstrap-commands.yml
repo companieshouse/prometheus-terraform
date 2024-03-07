@@ -1,5 +1,6 @@
 runcmd:
   - hostnamectl set-hostname ${hostname}
-  - sudo docker run -d --restart=always -p ${github_exporter_port}:${github_exporter_port} -e GITHUB_TOKEN="${github_exporter_token}" ${github_exporter_docker_image}:${github_exporter_docker_tag}
+  - /usr/bin/aws ssm get-parameter --with-decryption --region ${region} --output text --query Parameter.Value --name ${github_exporter_token_path} > /github_exporter_token
+  - sudo docker run -d --restart=always -p ${github_exporter_port}:${github_exporter_port} -e GITHUB_TOKEN="$(cat /github_exporter_token)" ${github_exporter_docker_image}:${github_exporter_docker_tag}
   - systemctl enable prometheus
   - systemctl start prometheus
