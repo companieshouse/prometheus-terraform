@@ -119,3 +119,9 @@ variable "web_cidrs" {
   type = list(string)
   description = "The CIDRs to grant web access to"
 }
+
+variable "enable_alb_logging" {
+  description = "Enable access logging for the ALB"
+  type        = bool
+  default     = false
+}
