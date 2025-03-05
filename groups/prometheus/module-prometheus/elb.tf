@@ -5,6 +5,16 @@ resource "aws_lb" "prometheus_server" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.prometheus_server.id]
   subnets            = var.application_subnets[*]
+  
+  dynamic "access_logs" {
+    for_each = var.enable_alb_logging ? [1] : []
+    content {
+      bucket  = local.elb_access_logs_bucket_name
+      prefix  = local.elb_access_logs_prefix
+      enabled = true
+    }
+  }
+  
   tags = {
     Environment     = var.environment
     Service         = var.service
