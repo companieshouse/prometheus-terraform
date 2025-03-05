@@ -34,4 +34,5 @@ module "prometheus" {
   dns_zone_id                  = data.aws_route53_zone.dns_zone.zone_id
   dns_zone_name                = local.dns_zone_name
   ssl_certificate_name         = var.ssl_certificate_name
+  enable_alb_logging           = var.enable_alb_logging
 }

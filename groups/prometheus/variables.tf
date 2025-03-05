@@ -82,3 +82,9 @@ variable "ssl_certificate_name" {
   description = "The name of an existing ACM certificate to use for the ELB SSL listener. Setting this disables certificate creation"
   default     = ""
 }
+
+variable "enable_alb_logging" {
+  description = "Enable access logging for the ALB"
+  type        = bool
+  default     = false
+}
