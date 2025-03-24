@@ -6,6 +6,8 @@ resource "aws_lb" "prometheus_server" {
   security_groups    = [aws_security_group.prometheus_server.id]
   subnets            = var.application_subnets[*]
   
+  enable_deletion_protection = true
+  
   dynamic "access_logs" {
     for_each = var.enable_alb_logging ? [1] : []
     content {
